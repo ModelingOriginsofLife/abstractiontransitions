@@ -1,6 +1,8 @@
 require("../test/constants.jl")
 require("types.jl")
 
+using StatsBase
+
 # population = Biofilm(5)
 # numfuncs = map(x->sum(x.genome),population.individuals)
 # totalfuncs = reduce((x,y)->x+y,map(x->x.genome,population.individuals))
@@ -15,11 +17,11 @@ require("types.jl")
 #----------------------------------
 
 # should initialize NB fully developed biofilms
-pop = Population(NB)
+pop = Population(3)
 
-# time loop
-for time
-    for bf in pop.individuals
-        
-    end
-end
+display(pop.individuals[1])
+
+fitvec = (Float64)[x.fitness for x in pop.individuals]
+
+new_gen = sample(pop.individuals, WeightVec(fitvec), length(pop.individuals))
+pop.individuals = new_gen
