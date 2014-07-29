@@ -45,8 +45,10 @@ for t=1:MAXTIME
         pop.individuals[i] = _new
     end
 
-    measure(pop,meas,t,measnum)
-    measnum += 1
+    if (mod(t-1,MEASPERIOD)==0) | (t==MAXTIME)
+        measure(pop,meas,t,measnum)
+        measnum += 1
+    end
 end
 
 #-------------------------
