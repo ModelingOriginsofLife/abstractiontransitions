@@ -5,9 +5,21 @@ require("types.jl")
 # numfuncs = map(x->sum(x.genome),population.individuals)
 # totalfuncs = reduce((x,y)->x+y,map(x->x.genome,population.individuals))
 
-population = Population()
-numfuncs(bf::Biofilm) = map(x->sum(x.genome),bf.individuals)
-totalfuncs(bf::Biofilm) = reduce((x,y)->x+y,map(x->x.genome,bf.individuals))
+#population = Population()
+#numfuncs(bf::Biofilm) = map(x->sum(x.genome),bf.individuals)
+#totalfuncs(bf::Biofilm) = reduce((x,y)->x+y,map(x->x.genome,bf.individuals))
 
-map(numfuncs,population.individuals)
-map(totalfuncs,population.individuals)
+#map(numfuncs,population.individuals)
+#map(totalfuncs,population.individuals)
+
+#----------------------------------
+
+# should initialize NB fully developed biofilms
+pop = Population(NB)
+
+# time loop
+for time
+    for bf in pop.individuals
+        
+    end
+end
