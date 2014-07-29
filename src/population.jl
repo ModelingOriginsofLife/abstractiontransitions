@@ -1,0 +1,1 @@
+Population() = Population(NB)

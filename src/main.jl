@@ -1,7 +1,12 @@
+using StatsBase
+
 require("../test/constants.jl")
 require("types.jl")
+require("cell.jl")
+require("biofilm.jl")
+require("population.jl")
+require("measure.jl")
 
-using StatsBase
 
 # population = Biofilm(5)
 # numfuncs = map(x->sum(x.genome),population.individuals)
@@ -17,6 +22,9 @@ using StatsBase
 #----------------------------------
 
 pop = Population()
+meas = Measure()
+measnum = 1
+
 
 for t=1:MAXTIME
     println("-- ", t)
@@ -29,4 +37,7 @@ for t=1:MAXTIME
         _new = reproduce(pop.individuals[i])
         pop.individuals[i] = _new
     end
+
+    #measure(pop,meas,t,measnum)
+    measnum += 1
 end

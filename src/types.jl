@@ -24,25 +24,6 @@ type Cell
     end
 end
 
-Cell() = Cell(GL)
-
-function getfitness(gen::BitArray{1})
-    sum(gen)
-end
-
-function mutate(c::Cell)
-    idx = [x < y for (x,y) in zip(rand(GL), MF*ones(GL))]
-    c.genome[idx] = !c.genome[idx]
-    c.fitness = getfitness(c.genome)
-end
-
-# Display properties of a cell
-function display(c::Cell)
-    println("Genome: ", c.genome)
-    println("Promoter: ", c.promoter)
-    println("Fitness: ", c.fitness)
-end
-
 ######################################################
 # Definition of the Biofilm type
 # - Biofilm(), Biofilm(ncells), Biofilm(CellArray)
@@ -56,7 +37,7 @@ type Biofilm
     individuals::Array{Cell,1}
     fitness::Float64
 
-    function Biofilm(size::Integer) 
+    function Biofilm(size::Integer)
         cells = [Cell() for i in [1:size]]
         fitness = getfitness(cells)
         new(cells, fitness)
@@ -68,59 +49,6 @@ type Biofilm
     end
 end
 
-Biofilm() = Biofilm(NC)
-
-function getfitness(cells::Array{Cell,1})
-    s = reduce((x,y)->x+y, map(x->x.fitness, cells))
-end
-
-# Complete cells a biofilm by duplicating cells of the spore
-# A mutation factor is included
-function grow(bf::Biofilm)
-    ncells = length(bf.individuals)
-    for i in range(1, NC-ncells)
-        idx = rand(1:ncells + i - 1)
-        newcell = deepcopy(bf.individuals[idx])
-        mutate(newcell)
-        push!(bf.individuals, newcell)
-    end
-    bf.fitness = getfitness(bf.individuals)
-end
-
-# Display properties of a biofilm
-function display(bf::Biofilm)
-    println("Number of cells: ", length(bf.individuals))
-    println("Total fitness: ", bf.fitness)
-    for cell in bf.individuals
-        println("- ", cell.genome, ", fitness: ",    cell.fitness)
-    end
-end
-
-# Create a spore and grow it
-function reproduce(bf::Biofilm)
-    idx = getspore(bf)
-    new_ = Biofilm(bf.individuals[idx])
-    grow(new_)
-    new_
-end
-
-# Returns a set of cells which possess all possible functions
-function getspore(bf::Biofilm)
-    survival = falses(GL)
-    idx = sample([1:NC], NC, replace=false)
-    j = 0
-    for (j, id) in enumerate(idx)
-        survival += bf.individuals[id].genome
-        survival = map(x-> x>0, survival)
-        if survival == trues(GL)
-            break
-        end
-    end
-    if survival != trues(GL)
-        println("no possible spore combination ", survival)
-    end
-    return idx[1:j]
-end
 
 ######################################################
 # Definition of the Population type
@@ -132,4 +60,12 @@ type Population
     Population(size::Integer) = new([Biofilm() for i in [1:size]])
 end
 
-Population() = Population(NB)
+type Measure
+    time::Vector{Int64}
+    fitness::Vector{Float64} # average population fitness
+    fitnessstd::Vector{Float64} # std population fitness
+    numfuncs::Vector{Float64} # average number of functions per cell
+    stdnumfuncs::Vector{Float64} # average number of functions per cell
+end
+
+typealias Time Int64
