@@ -18,18 +18,19 @@ using StatsBase
 
 pop = Population()
 
-display(pop.individuals[2])
+t = 0
 
-bf = reproduce(pop.individuals[2])
-pop.individuals[2] = bf
+while t < MAXTIME
+    println("-- ", t)
 
-display(pop.individuals[2])
+    fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
+    println(fitvec)
+    idx = sample([1:NB], fitvec, NB)
 
+    for i in idx
+        _new = reproduce(pop.individuals[i])
+        pop.individuals[i] = _new
+    end
 
-#while i < NB
-    # new_pop = deepcopy(pop)
-    # fitvec = (Float64)[x.fitness for x in pop.individuals]
-    # idx = sample(WeightVec(fitvec))
-    # bf = reproduce(pop.individuals[2])
-    # pop.individuals[2] = bf
-#end
+    t += 1
+end

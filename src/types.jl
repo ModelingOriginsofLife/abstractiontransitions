@@ -119,7 +119,6 @@ function getspore(bf::Biofilm)
     if survival != trues(GL)
         println("no possible spore combination ", survival)
     end
-    println("spore size ", j)
     return idx[1:j]
 end
 
