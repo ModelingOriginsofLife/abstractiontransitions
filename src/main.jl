@@ -27,6 +27,7 @@ configpath = joinpath(indir,configfile)
 run(`cp $configpath $simdir`)
 
 #----------------------------------
+println("------------------------------")
 
 pop = Population()
 meas = Measure()
@@ -34,10 +35,8 @@ measnum = 1
 
 
 for t=1:MAXTIME
-    println("-- ", t)
 
     fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
-    println(fitvec)
     idx = sample([1:NB], fitvec, NB)
 
     for i in idx
