@@ -50,7 +50,7 @@ for t=1:MAXTIME
 end
 
 #-------------------------
-# setup
+# write output
 #-------------------------
 
 df = save(meas,joinpath(simdir,"sim.csv"))
@@ -60,3 +60,16 @@ println("\nview output with:")
 outputpath = replace(joinpath(simdir,"sim.csv"),r"\.\./","")
 println("column -s, -t < $(outputpath)")
 #----------------------------------
+
+if PLOTFLAG
+
+    plotspdf = joinpath(simdir,"plots.pdf")
+    plotxvar = "time"
+    plotyvar = ["fitness", "numfuncs"]
+    plotspdfs = map(x->joinpath(simdir,string(x,".pdf")),plotyvar)
+    run(`python plotdata.py -d $simdir -x $plotxvar -y $plotyvar`)
+    run(`gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$plotspdf
+            -dBATCH $plotspdfs`)
+    spawn(`evince $plotspdf`)
+
+end
