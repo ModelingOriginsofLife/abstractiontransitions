@@ -65,7 +65,7 @@ type Measure
     fitness::Vector{Float64} # average population fitness
     fitnessstd::Vector{Float64} # std population fitness
     numfuncs::Vector{Float64} # average number of functions per cell
-    stdnumfuncs::Vector{Float64} # average number of functions per cell
+    numfuncsstd::Vector{Float64} # average number of functions per cell
 end
 
 typealias Time Int64

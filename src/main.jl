@@ -1,23 +1,30 @@
 using StatsBase
+using Datetime
 
 require("../test/constants.jl")
+require("utilities.jl")
 require("types.jl")
 require("cell.jl")
 require("biofilm.jl")
 require("population.jl")
 require("measure.jl")
 
+#-------------------------
+# setup
+#-------------------------
 
-# population = Biofilm(5)
-# numfuncs = map(x->sum(x.genome),population.individuals)
-# totalfuncs = reduce((x,y)->x+y,map(x->x.genome,population.individuals))
+# configfile = "constants.jl"
+configfile = "constants_test.jl"
+indir = joinpath("..","input")
+outdir = joinpath("..","output")
+require(joinpath(indir,configfile))
 
-#population = Population()
-#numfuncs(bf::Biofilm) = map(x->sum(x.genome),bf.individuals)
-#totalfuncs(bf::Biofilm) = reduce((x,y)->x+y,map(x->x.genome,bf.individuals))
+timestamp = gentimestamp()
 
-#map(numfuncs,population.individuals)
-#map(totalfuncs,population.individuals)
+simdir = joinpath(outdir,timestamp)
+run(`mkdir $simdir`)
+configpath = joinpath(indir,configfile)
+run(`cp $configpath $simdir`)
 
 #----------------------------------
 
@@ -38,6 +45,14 @@ for t=1:MAXTIME
         pop.individuals[i] = _new
     end
 
-    #measure(pop,meas,t,measnum)
+    measure(pop,meas,t,measnum)
     measnum += 1
 end
+
+#-------------------------
+# setup
+#-------------------------
+
+df = save(meas,joinpath(simdir,"sim.csv"))
+
+#----------------------------------
