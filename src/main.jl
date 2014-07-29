@@ -16,12 +16,20 @@ using StatsBase
 
 #----------------------------------
 
-# should initialize NB fully developed biofilms
-pop = Population(3)
+pop = Population()
 
-display(pop.individuals[1])
+display(pop.individuals[2])
 
-fitvec = (Float64)[x.fitness for x in pop.individuals]
+bf = reproduce(pop.individuals[2])
+pop.individuals[2] = bf
 
-new_gen = sample(pop.individuals, WeightVec(fitvec), length(pop.individuals))
-pop.individuals = new_gen
+display(pop.individuals[2])
+
+
+#while i < NB
+    # new_pop = deepcopy(pop)
+    # fitvec = (Float64)[x.fitness for x in pop.individuals]
+    # idx = sample(WeightVec(fitvec))
+    # bf = reproduce(pop.individuals[2])
+    # pop.individuals[2] = bf
+#end

@@ -43,11 +43,16 @@ type Biofilm
         fitness = getfitness(cells)
         new(cells, fitness)
     end
+
+    function Biofilm(cells::Array{Cell,1})
+        fitness = getfitness(cells)
+        new(cells, fitness)
+    end
 end
 
 function getfitness(cells::Array{Cell,1})
     s = reduce((x,y)->x+y, map(x->x.fitness, cells))
-    s *= (0.5 + rand())
+    #s *= (0.5 + rand())
     s 
 end
 
@@ -56,7 +61,6 @@ function grow(bf::Biofilm)
     for i in range(1, NC-ncells)
         idx = rand(1:ncells + i - 1)
         newcell = deepcopy(bf.individuals[idx])
-        println(newcell)
         mutate(newcell)
         push!(bf.individuals, newcell)
     end
@@ -71,6 +75,30 @@ function display(bf::Biofilm)
     end
 end
 
+function reproduce(bf::Biofilm)
+    idx = getspore(bf)
+    new_ = Biofilm(bf.individuals[idx])
+    grow(new_)
+    new_
+end
+
+function getspore(bf::Biofilm)
+    survival = falses(GL)
+    idx = sample([1:NC], NC, replace=false)
+    j = 0
+    for (j, id) in enumerate(idx)
+        survival += bf.individuals[id].genome
+        survival = map(x-> x>0, survival)
+        if survival == trues(GL)
+            break
+        end
+    end
+    if survival != trues(GL)
+        println("no possible spore combination ", survival)
+    end
+    println("spore size ", j)
+    return idx[1:j]
+end
 
 Biofilm() = Biofilm(NC)
 
