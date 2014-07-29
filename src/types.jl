@@ -23,6 +23,14 @@ function getfitness(gen::BitArray{1})
     sum(gen)
 end
 
+function mutate(c::Cell)
+    factor = 0.05
+    idx = [x < y for (x,y) in zip(rand(GL), factor*ones(GL))]
+    c.genome[idx] = !c.genome[idx]
+    c.fitness = getfitness(c.genome)
+end
+
+
 Cell() = Cell(GL)
 
 ######################################################
@@ -48,6 +56,8 @@ function grow(bf::Biofilm)
     for i in range(1, NC-ncells)
         idx = rand(1:ncells + i - 1)
         newcell = deepcopy(bf.individuals[idx])
+        println(newcell)
+        mutate(newcell)
         push!(bf.individuals, newcell)
     end
     bf.fitness = getfitness(bf.individuals)
