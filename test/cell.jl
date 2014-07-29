@@ -10,8 +10,8 @@ require("src/cell.jl")
 
 function testcells()
     newcell = Cell()
-    @test newcell.genome==falses(GL)
-    @test newcell.promoter==ones(GL)
+    @test length(newcell.genome) == GL
+    @test length(newcell.promoter) == GL
 end
 
 testcells()
