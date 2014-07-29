@@ -1,7 +1,12 @@
 using StatsBase
 using Datetime
 
-require("../test/constants.jl")
+# configfile = "constants.jl"
+configfile = "constants_test.jl"
+indir = joinpath("..","input")
+outdir = joinpath("..","output")
+require(joinpath(indir,configfile))
+
 require("utilities.jl")
 require("types.jl")
 require("cell.jl")
@@ -13,12 +18,6 @@ require("plot.jl")
 #-------------------------
 # setup
 #-------------------------
-
-# configfile = "constants.jl"
-configfile = "constants_test.jl"
-indir = joinpath("..","input")
-outdir = joinpath("..","output")
-require(joinpath(indir,configfile))
 
 timestamp = gentimestamp()
 
