@@ -1,5 +1,6 @@
 tests = [
-    "cell"
+    "cell",
+    "biofilm"
     ]
 
 println("Running tests:")
