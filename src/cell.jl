@@ -1,7 +1,7 @@
 Cell() = Cell(GL)
 
 function getfitness(gen::BitArray{1})
-    sum(gen)
+    0.8^sum(gen)
 end
 
 function mutate(c::Cell)
