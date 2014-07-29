@@ -8,6 +8,7 @@ require("cell.jl")
 require("biofilm.jl")
 require("population.jl")
 require("measure.jl")
+require("plot.jl")
 
 #-------------------------
 # setup
@@ -50,26 +51,18 @@ for t=1:MAXTIME
 end
 
 #-------------------------
-# write output
+# write output and plot
 #-------------------------
 
 df = save(meas,joinpath(simdir,"sim.csv"))
+
+println("------------------------------")
+if PLOTFLAG
+    plot(simdir)
+end
+
 println()
-#run(`cat $(joinpath(simdir,"sim.csv"))` |> `column -s, -t`)
-println("\nview output with:")
+println("view data with:")
 outputpath = replace(joinpath(simdir,"sim.csv"),r"\.\./","")
 println("column -s, -t < $(outputpath)")
-#----------------------------------
-
-if PLOTFLAG
-
-    plotspdf = joinpath(simdir,"plots.pdf")
-    plotxvar = "time"
-    plotyvar = ["fitness", "numfuncs"]
-    plotspdfs = map(x->joinpath(simdir,string(x,".pdf")),plotyvar)
-    run(`python plotdata.py -d $simdir -x $plotxvar -y $plotyvar`)
-    run(`gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$plotspdf
-            -dBATCH $plotspdfs`)
-    spawn(`evince $plotspdf`)
-
-end
+#run(`cat $(joinpath(simdir,"sim.csv"))` |> `column -s, -t`)
