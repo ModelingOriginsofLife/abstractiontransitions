@@ -18,9 +18,7 @@ using StatsBase
 
 pop = Population()
 
-t = 0
-
-while t < MAXTIME
+for t=1:MAXTIME
     println("-- ", t)
 
     fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
@@ -31,6 +29,4 @@ while t < MAXTIME
         _new = reproduce(pop.individuals[i])
         pop.individuals[i] = _new
     end
-
-    t += 1
 end
