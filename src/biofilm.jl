@@ -11,8 +11,9 @@ end
 function grow(bf::Biofilm)
     ncells = length(bf.individuals)
     for i in range(1, NC-ncells)
-        idx = rand(1:ncells + i - 1)
-        newcell = deepcopy(bf.individuals[idx])
+        fitvec = WeightVec((Float64)[c.fitness for c in bf.individuals])
+        idx = sample([1:length(bf.individuals)], fitvec, 1)
+        newcell = deepcopy(bf.individuals[idx[1]])
         mutate(newcell)
         push!(bf.individuals, newcell)
     end
