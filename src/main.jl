@@ -54,5 +54,9 @@ end
 #-------------------------
 
 df = save(meas,joinpath(simdir,"sim.csv"))
-
+println()
+#run(`cat $(joinpath(simdir,"sim.csv"))` |> `column -s, -t`)
+println("\nview output with:")
+outputpath = replace(joinpath(simdir,"sim.csv"),r"\.\./","")
+println("column -s, -t < $(outputpath)")
 #----------------------------------
