@@ -62,6 +62,7 @@ end
 
 type Measure
     time::Vector{Int64}
+    biofitness::Vector{Float64} # average population fitness
     fitness::Vector{Float64} # average population fitness
     fitnessstd::Vector{Float64} # std population fitness
     numfuncs::Vector{Float64} # average number of functions per cell

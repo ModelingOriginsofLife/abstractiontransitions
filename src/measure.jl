@@ -2,6 +2,7 @@ using DataFrames
 
 function Measure()
     time = zeros(Int64,NUMMEAS)
+    biofitness = zeros(Float64,NUMMEAS)
     fitness = zeros(Float64,NUMMEAS)
     fitnessstd = zeros(Float64,NUMMEAS)
     numfuncs = zeros(Float64,NUMMEAS)
@@ -9,7 +10,7 @@ function Measure()
     diversity = zeros(Float64,NUMMEAS)
     diversitystd = zeros(Float64,NUMMEAS)
 
-    Measure(time, fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd)
+    Measure(time,biofitness,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
@@ -25,6 +26,7 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
     diversityvect = map(x->length(unique(x)),genomesincells)
 
+    m.biofitness[n] = mean([bf.fitness for bf in pop.individuals])
     m.fitness[n] = mean(fitvect)
     m.fitnessstd[n] = std(fitvect)
     m.numfuncs[n] = mean(numfuncsvect)
@@ -32,12 +34,14 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     m.diversity[n] = mean(diversityvect)
     m.diversitystd[n] = std(diversityvect)
 
-    @printf("time: %06d, measurement: %03d, avg_fitness: %5.3f, avg_numfuncs: %5.3f avg_diversity: %5.3f\n", t, n, m.fitness[n], m.numfuncs[n],m.diversity[n])
+    @printf("time: %06d, measurement: %03d, avg_cfitness: %5.3f, avg_numfuncs: %5.3f avg_diversity: %5.3f, avg_bfitness: %5.3f\n", 
+                t, n, m.fitness[n], m.numfuncs[n],m.diversity[n],m.biofitness[n])
 
 end
 
 function save(m::Measure, fname::String)
     df = DataFrame(time=m.time,
+                   biofitness=m.biofitness,
                    fitness=m.fitness,
                    fitnessstd=m.fitnessstd,
                    numfuncs=m.numfuncs,
