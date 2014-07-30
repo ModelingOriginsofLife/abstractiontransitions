@@ -47,7 +47,3 @@ function save(m::Measure, fname::String)
     writetable(fname,df)
     return df
 end
-
-# function measure(me::Biofilm)
-# # # update fitness, robustness, and modularity measures
-# end

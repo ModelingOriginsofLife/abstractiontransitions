@@ -14,13 +14,18 @@ type Cell
     fitness::Float64
 
     function Cell(genomelength::Integer)
-        dist = Categorical([.7,.2,.1])
-        numgenes = rand(dist)
+        # dist = Categorical([.7,.2,.1])
+        # numgenes = rand(dist)
+        numgenes=1
         inds = rand(1:genomelength,numgenes)
         genebitstring = falses(genomelength)
         genebitstring[inds] = true
+        promoter = ones(Integer,genomelength)
+        # this getfitness won't work if
+        # genebitstring contains more than one "true"
         fitness = getfitness(genebitstring)
-        new(genebitstring, rand(1:genomelength,genomelength), fitness)
+        # new(genebitstring, rand(1:genomelength,genomelength), fitness)
+        new(genebitstring, promoter, fitness)
     end
 end
 
