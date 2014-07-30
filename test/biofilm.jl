@@ -2,11 +2,12 @@ using Base.Test
 #using Debug
 
 # testdir
-require("test/constants.jl")
+require("input/constants_test.jl")
 
 # srcdir
 require("src/types.jl")
 require("src/cell.jl")
+require("src/biofilm.jl")
 
 function testcells()
     biofilm = Biofilm(1)

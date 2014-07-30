@@ -1,3 +1,5 @@
+using StatsBase
+
 tests = [
     "cell",
     "biofilm"
