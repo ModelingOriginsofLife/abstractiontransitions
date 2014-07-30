@@ -6,24 +6,33 @@ function Measure()
     fitnessstd = zeros(Float64,NUMMEAS)
     numfuncs = zeros(Float64,NUMMEAS)
     numfuncsstd = zeros(Float64,NUMMEAS)
+    diversity = zeros(Float64,NUMMEAS)
+    diversitystd = zeros(Float64,NUMMEAS)
 
-    Measure(time, fitness,fitnessstd,numfuncs,numfuncsstd)
+    Measure(time, fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
-    # update measurements
-    #pmap(measure,pop.individuals)
+    # Array{Array{Cell,1},1}
+    cellsinbiofilms = map(x->x.individuals,pop.individuals)
+
+    # Array{Array{BitArray{1},1},1}
+    genomesincells = map(x->map(y->y.genome,x),cellsinbiofilms)
 
     # store measurements in Measure
     m.time[n] = t
-    fitvect = map(x->x.fitness, flatten(map(x->x.individuals,pop.individuals)))
-    numfuncsvect = map(x->sum(x.genome),flatten(map(x->x.individuals,pop.individuals)))
+    fitvect = map(x->x.fitness, flatten(cellsinbiofilms))
+    numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
+    diversityvect = map(x->length(unique(x)),genomesincells)
+
     m.fitness[n] = mean(fitvect)
     m.fitnessstd[n] = std(fitvect)
     m.numfuncs[n] = mean(numfuncsvect)
     m.numfuncsstd[n] = std(numfuncsvect)
+    m.diversity[n] = mean(diversityvect)
+    m.diversitystd[n] = std(diversityvect)
 
-    @printf("time: %06d, measurement: %03d, avg_fitness: %5.3f, avg_numfuncs: %5.3f\n", t, n, m.fitness[n], m.numfuncs[n])
+    @printf("time: %06d, measurement: %03d, avg_fitness: %5.3f, avg_numfuncs: %5.3f avg_diversity: %5.3f\n", t, n, m.fitness[n], m.numfuncs[n],m.diversity[n])
 
 end
 
@@ -32,7 +41,9 @@ function save(m::Measure, fname::String)
                    fitness=m.fitness,
                    fitnessstd=m.fitnessstd,
                    numfuncs=m.numfuncs,
-                   numfuncsstd=m.numfuncsstd)
+                   numfuncsstd=m.numfuncsstd,
+                   diversity=m.diversity,
+                   diversitystd=m.diversitystd)
     writetable(fname,df)
     return df
 end

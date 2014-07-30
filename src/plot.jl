@@ -1,7 +1,7 @@
 function plot(simdir)
     plotspdf = joinpath(simdir,"plots.pdf")
     plotxvar = "time"
-    plotyvar = ["fitness", "numfuncs"]
+    plotyvar = ["fitness", "numfuncs","diversity"]
     plotspdfs = map(x->joinpath(simdir,string(x,".pdf")),plotyvar)
     run(`python plotdata.py -d $simdir -x $plotxvar -y $plotyvar`)
     run(`gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$plotspdf
