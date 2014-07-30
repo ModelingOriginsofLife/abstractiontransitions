@@ -41,16 +41,17 @@ end
 type Biofilm
     individuals::Array{Cell,1}
     fitness::Float64
+    sporesize::Integer
 
     function Biofilm(size::Integer)
         cells = [Cell() for i in [1:size]]
         fitness = getfitness(cells)
-        new(cells, fitness)
+        new(cells, fitness,NC)
     end
 
-    function Biofilm(cells::Array{Cell,1})
+    function Biofilm(cells::Array{Cell,1},sporesize)
         fitness = getfitness(cells)
-        new(cells, fitness)
+        new(cells, fitness,sporesize)
     end
 end
 
