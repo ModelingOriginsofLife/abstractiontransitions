@@ -9,8 +9,10 @@ function Measure()
     numfuncsstd = zeros(Float64,NUMMEAS)
     diversity = zeros(Float64,NUMMEAS)
     diversitystd = zeros(Float64,NUMMEAS)
+    sporesize = zeros(Float64,NUMMEAS)
+    sporesizestd = zeros(Float64,NUMMEAS)
 
-    Measure(time,biofitness,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd)
+    Measure(time,biofitness,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd,sporesize,sporesizestd)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
@@ -25,6 +27,7 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     fitvect = map(x->x.fitness, flatten(cellsinbiofilms))
     numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
     diversityvect = map(x->length(unique(x)),genomesincells)
+    sporesizevect = map(x->x.sporesize,pop.individuals)
 
     m.biofitness[n] = mean([bf.fitness for bf in pop.individuals])
     m.fitness[n] = mean(fitvect)
@@ -33,9 +36,11 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     m.numfuncsstd[n] = std(numfuncsvect)
     m.diversity[n] = mean(diversityvect)
     m.diversitystd[n] = std(diversityvect)
+    m.sporesize[n] = mean(sporesizevect)
+    m.sporesizestd[n] = std(sporesizevect)
 
-    @printf("time: %06d, measurement: %03d, avg_cfitness: %5.3f, avg_numfuncs: %5.3f avg_diversity: %5.3f, avg_bfitness: %5.3f\n", 
-                t, n, m.fitness[n], m.numfuncs[n],m.diversity[n],m.biofitness[n])
+    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
+                t, n, m.fitness[n], m.numfuncs[n],m.diversity[n],m.biofitness[n],m.sporesize[n])
 
 end
 
@@ -47,7 +52,9 @@ function save(m::Measure, fname::String)
                    numfuncs=m.numfuncs,
                    numfuncsstd=m.numfuncsstd,
                    diversity=m.diversity,
-                   diversitystd=m.diversitystd)
+                   diversitystd=m.diversitystd,
+                   sporesize=m.sporesize,
+                   sporesizestd=m.sporesizestd)
     writetable(fname,df)
     return df
 end

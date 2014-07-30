@@ -75,6 +75,8 @@ type Measure
     numfuncsstd::Vector{Float64} # std of functions per cell
     diversity::Vector{Float64} # average number of types per biofilm
     diversitystd::Vector{Float64} # std of functions per cell
+    sporesize::Vector{Float64} # average sporesize for biofilms
+    sporesizestd::Vector{Float64} # std of sporesize for biofilms
 end
 
 typealias Time Int64
