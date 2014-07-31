@@ -42,7 +42,7 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     m.sporesize[n] = mean(sporesizevect)
     m.sporesizestd[n] = std(sporesizevect)
 
-    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
+    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f, diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
                 t, n, m.fitness[n], m.numfuncs[n],m.diversity[n],m.biofitness[n],m.sporesize[n])
 
 end
