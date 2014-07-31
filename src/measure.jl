@@ -3,6 +3,7 @@ using DataFrames
 function Measure()
     time = zeros(Int64,NUMMEAS)
     biofitness = zeros(Float64,NUMMEAS)
+    biofitnessstd = zeros(Float64,NUMMEAS)
     fitness = zeros(Float64,NUMMEAS)
     fitnessstd = zeros(Float64,NUMMEAS)
     numfuncs = zeros(Float64,NUMMEAS)
@@ -12,7 +13,7 @@ function Measure()
     sporesize = zeros(Float64,NUMMEAS)
     sporesizestd = zeros(Float64,NUMMEAS)
 
-    Measure(time,biofitness,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd,sporesize,sporesizestd)
+    Measure(time,biofitness,biofitnessstd,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd,sporesize,sporesizestd)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
@@ -25,11 +26,13 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     # store measurements in Measure
     m.time[n] = t
     fitvect = map(x->x.fitness, flatten(cellsinbiofilms))
+    biofitvect = map(x->x.fitness, pop.individuals)
     numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
     diversityvect = map(x->length(unique(x)),genomesincells)
     sporesizevect = map(x->x.sporesize,pop.individuals)
 
-    m.biofitness[n] = mean([bf.fitness for bf in pop.individuals])
+    m.biofitness[n] = mean(biofitvect)
+    m.biofitnessstd[n] = std(biofitvect)
     m.fitness[n] = mean(fitvect)
     m.fitnessstd[n] = std(fitvect)
     m.numfuncs[n] = mean(numfuncsvect)
@@ -47,6 +50,7 @@ end
 function save(m::Measure, fname::String)
     df = DataFrame(time=m.time,
                    biofitness=m.biofitness,
+                   biofitnessstd=m.biofitnessstd,
                    fitness=m.fitness,
                    fitnessstd=m.fitnessstd,
                    numfuncs=m.numfuncs,
