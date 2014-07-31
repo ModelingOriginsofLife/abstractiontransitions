@@ -7,13 +7,13 @@ end
 function getfitness(c::Cell)
     idx = find(c.genome)
 
-    if length(idx)>1
-        eqpairs = map(x->c.promoter[x[1]]==c.promoter[x[2]],
-                      combinations(idx,2))
-        if length(eqpairs)>0 & sum(eqpairs)>0
-            return 0.0
-        end
-    end
+    # if length(idx)>1
+    #     eqpairs = map(x->c.promoter[x[1]]==c.promoter[x[2]],
+    #                   combinations(idx,2))
+    #     if length(eqpairs)>0 & sum(eqpairs)>0
+    #         return 0.0
+    #     end
+    # end
 
     return getfitness(c.genome)
 end
@@ -21,7 +21,12 @@ end
 function mutate(c::Cell)
     # mutate genome
     idx = mutating(GL, MF)
-    switchbits(idx, c.genome)
+    # switchbits(idx, c.genome)
+    switchoff(idx, c.genome)
+
+    idx = mutating(GL,MF/10)
+    switchon(idx, c.genome)
+
     # mutate promoters)
     idx = mutating(GL, PF)
     if !isempty(idx)
@@ -37,6 +42,20 @@ end
 function switchbits(idx::Array{Int64}, gen::BitArray{1})
     if !isempty(idx)
         gen[idx] = !gen[idx]
+    end
+    gen
+end
+
+function switchoff(idx::Array{Int64}, gen::BitArray{1})
+    if !isempty(idx)
+        gen[idx] = false
+    end
+    gen
+end
+
+function switchon(idx::Array{Int64}, gen::BitArray{1})
+    if !isempty(idx)
+        gen[idx] = true
     end
     gen
 end

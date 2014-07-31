@@ -7,7 +7,7 @@ const MF = 0.001 # gene mutation factor
 const PF = 0.001 # promoter mutation factor
 const CFC = 0.8 # base of cell fitness function exponent
 const MAXTIME = 1000 # number of iterations
-const FRACMEAS = 10/MAXTIME
+const FRACMEAS = 50/MAXTIME
 const MEASPERIOD = convert(Int64,round(1/FRACMEAS))
 const NUMMEAS = convert(Int64,round(MAXTIME/MEASPERIOD) + 1)
 
