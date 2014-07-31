@@ -2,7 +2,7 @@ Biofilm() = Biofilm(NC)
 
 function getfitness(cells::Array{Cell,1})
     s = reduce((x,y)->x+y, map(x->x.genome, cells))
-    s = 1./norm(s-1)
+    s = 1./norm(s-0.99)
     s
 end
 
