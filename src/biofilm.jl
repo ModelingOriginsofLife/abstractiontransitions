@@ -32,25 +32,29 @@ end
 # Create a spore and grow it
 function reproduce(bf::Biofilm)
     idx = getspore(bf)
-    new_ = Biofilm(bf.individuals[idx],length(idx))
+    new_ = Biofilm(bf.individuals[idx], length(idx))
     grow(new_)
     new_
 end
 
 # Returns a set of cells which possess all possible functions
 function getspore(bf::Biofilm)
-    survival = falses(GL)
     idx = sample([1:NC], NC, replace=false)
-    j = 0
-    for (j, id) in enumerate(idx)
-        survival += bf.individuals[id].genome
-        survival = map(x-> x>0, survival)
-        if survival == trues(GL)
-            break
+    spore = Array(Integer, 0)
+    genepool = Array(BitArray{1}, 0)
+    for i in idx
+        candidate = bf.individuals[i]
+        if isempty(genepool)
+            push!(genepool, candidate.genome)
+            push!(spore, i)
+        elseif sum(map(x->x==candidate.genome, genepool)) == 0
+            push!(genepool, candidate.genome)
+            push!(spore, i)
+        end
+        if map(x-> x>0, sum(genepool)) == trues(GL)
+            return spore
         end
     end
-    if survival != trues(GL)
-        println("no possible spore combination ", survival)
-    end
-    return idx[1:j]
+    println("no possible spore combination ", genepool)
+    return 0
 end
