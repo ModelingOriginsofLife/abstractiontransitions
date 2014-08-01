@@ -2,7 +2,11 @@ Biofilm() = Biofilm(NC)
 
 function getfitness(cells::Array{Cell,1})
     s = reduce((x,y)->x+y, map(x->x.genome, cells))
-    s = 1./norm(s-0.99)
+    if map(x->x>0,s) == trues(GL)
+        s = 1./norm(s-0.99)
+    else
+        s = 0.0
+    end
     s
 end
 
@@ -11,6 +15,14 @@ end
 function grow(bf::Biofilm)
     ncells = length(bf.individuals)
     for i in range(1, NC-ncells)
+        # horizontal gene transfer
+        if rand() < 5*MF
+            idx = sample([1:length(bf.individuals)],2)
+            gidx = sample([1:GL])
+            bf.individuals[idx[1]].genome[gidx] = bf.individuals[idx[2]].genome[gidx]
+        end
+
+        # replicate and mutate
         fitvec = WeightVec((Float64)[c.fitness for c in bf.individuals])
         idx = sample([1:length(bf.individuals)], fitvec, 1)
         newcell = deepcopy(bf.individuals[idx[1]])
@@ -34,11 +46,11 @@ function reproduce(bf::Biofilm)
 
     idx = getspore(bf)
     if idx == 0
-        return bf
+        return 0
     else
         new_ = Biofilm(bf.individuals[idx], length(idx))
         grow(new_)
-        new_
+        return new_
     end
 end
 
@@ -60,6 +72,8 @@ function getspore(bf::Biofilm)
             return spore
         end
     end
-    println("no possible spore combination ", genepool)
+    if DEBUGFLAG
+        println("no possible spore combination ", sum(genepool))
+    end
     return 0
 end

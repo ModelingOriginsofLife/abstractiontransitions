@@ -24,8 +24,8 @@ function mutate(c::Cell)
     # switchbits(idx, c.genome)
     switchoff(idx, c.genome)
 
-    idx = mutating(GL,MF/10)
-    switchon(idx, c.genome)
+    # idx = mutating(GL,MF)
+    # switchon(idx, c.genome)
 
     # mutate promoters)
     idx = mutating(GL, PF)

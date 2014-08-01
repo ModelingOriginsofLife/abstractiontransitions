@@ -13,3 +13,4 @@ const NUMMEAS = convert(Int64,round(MAXTIME/MEASPERIOD) + 1)
 
 #flags
 const PLOTFLAG = true
+const DEBUGFLAG = false

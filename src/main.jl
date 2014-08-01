@@ -24,14 +24,7 @@ measnum = 1
 
 for t=1:MAXTIME
 
-    fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
-    idx = sample([1:NB], fitvec, NB)
-    oldpop = deepcopy(pop)
-
-    for i in idx
-        _new = reproduce(oldpop.individuals[i])
-        pop.individuals[i] = _new
-    end
+    reproduce(pop)
 
     if (mod(t-1,MEASPERIOD)==0) | (t==MAXTIME)
         measure(pop,meas,t,measnum)
