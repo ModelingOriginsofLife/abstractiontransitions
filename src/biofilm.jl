@@ -31,10 +31,15 @@ end
 
 # Create a spore and grow it
 function reproduce(bf::Biofilm)
+
     idx = getspore(bf)
-    new_ = Biofilm(bf.individuals[idx], length(idx))
-    grow(new_)
-    new_
+    if idx == 0
+        return bf
+    else
+        new_ = Biofilm(bf.individuals[idx], length(idx))
+        grow(new_)
+        new_
+    end
 end
 
 # Returns a set of cells which possess all possible functions

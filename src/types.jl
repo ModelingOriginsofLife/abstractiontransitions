@@ -46,7 +46,7 @@ type Biofilm
     function Biofilm(size::Integer)
         cells = [Cell() for i in [1:size]]
         fitness = getfitness(cells)
-        new(cells, fitness, NC/2)
+        new(cells, fitness, NC/GL)
     end
 
     function Biofilm(cells::Array{Cell,1},sporesize)

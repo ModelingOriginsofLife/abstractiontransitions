@@ -26,9 +26,10 @@ for t=1:MAXTIME
 
     fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
     idx = sample([1:NB], fitvec, NB)
+    oldpop = deepcopy(pop)
 
     for i in idx
-        _new = reproduce(pop.individuals[i])
+        _new = reproduce(oldpop.individuals[i])
         pop.individuals[i] = _new
     end
 
