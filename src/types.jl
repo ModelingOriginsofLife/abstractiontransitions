@@ -11,21 +11,22 @@ using Distributions
 type Cell
     genome::BitArray{1}
     promoter::Array{Integer,1}
+    expressed::BitArray{1}
     fitness::Float64
 
     function Cell(genomelength::Integer)
         # dist = Categorical([.7,.2,.1])
         # numgenes = rand(dist)
-        numgenes=1
-        inds = rand(1:genomelength,numgenes)
+        numgenes = 1 
+        inds = rand(1:genomelength, numgenes)
         genebitstring = falses(genomelength)
         genebitstring[inds] = true
-        promoter = ones(Integer,genomelength)
-        # this getfitness won't work if
-        # genebitstring contains more than one "true"
+        promoter = convert(Array{Integer}, rand(1:NP, genomelength))
+        expressed = getexpressed(genebitstring, promoter)
+
         fitness = getfitness(genebitstring)
-        # new(genebitstring, rand(1:genomelength,genomelength), fitness)
-        new(genebitstring, promoter, fitness)
+
+        new(genebitstring, promoter, expressed, fitness)
     end
 end
 
@@ -51,7 +52,7 @@ type Biofilm
 
     function Biofilm(cells::Array{Cell,1},sporesize)
         fitness = getfitness(cells)
-        new(cells, fitness,sporesize)
+        new(cells, fitness, sporesize)
     end
 end
 
@@ -78,6 +79,8 @@ type Measure
     diversitystd::Vector{Float64} # std of functions per cell
     sporesize::Vector{Float64} # average sporesize for biofilms
     sporesizestd::Vector{Float64} # std of sporesize for biofilms
+    expressed::Vector{Float64} # average sporesize for biofilms
+    expressedstd::Vector{Float64} # std of sporesize for biofilms
 end
 
 typealias Time Int64

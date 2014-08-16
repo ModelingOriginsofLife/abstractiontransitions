@@ -12,8 +12,11 @@ function Measure()
     diversitystd = zeros(Float64,NUMMEAS)
     sporesize = zeros(Float64,NUMMEAS)
     sporesizestd = zeros(Float64,NUMMEAS)
+    expressed = zeros(Float64,NUMMEAS)
+    expressedstd = zeros(Float64,NUMMEAS)
 
-    Measure(time,biofitness,biofitnessstd,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd,sporesize,sporesizestd)
+    Measure(time,biofitness,biofitnessstd,fitness,fitnessstd,numfuncs,numfuncsstd,diversity,diversitystd,
+                 sporesize,sporesizestd,expressed,expressedstd)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
@@ -27,7 +30,9 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     m.time[n] = t
     fitvect = map(x->x.fitness, flatten(cellsinbiofilms))
     biofitvect = map(x->x.fitness, pop.individuals)
+
     numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
+    expressedvect = map(x->sum(x.expressed),flatten(cellsinbiofilms))
     diversityvect = map(x->length(unique(x)),genomesincells)
     sporesizevect = map(x->x.sporesize,pop.individuals)
 
@@ -41,9 +46,11 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
     m.diversitystd[n] = std(diversityvect)
     m.sporesize[n] = mean(sporesizevect)
     m.sporesizestd[n] = std(sporesizevect)
+    m.expressed[n] = mean(expressedvect)
+    m.expressedstd[n] = std(expressedvect)
 
-    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f, diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
-                t, n, m.fitness[n], m.numfuncs[n],m.diversity[n],m.biofitness[n],m.sporesize[n])
+    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f, expressed: %5.3f, diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
+                t, n, m.fitness[n], m.numfuncs[n], m.expressed[n], m.diversity[n],m.biofitness[n],m.sporesize[n])
 
 end
 
@@ -58,7 +65,9 @@ function save(m::Measure, fname::String)
                    diversity=m.diversity,
                    diversitystd=m.diversitystd,
                    sporesize=m.sporesize,
-                   sporesizestd=m.sporesizestd)
+                   sporesizestd=m.sporesizestd,
+                   expressed=m.expressed,
+                   expressedstd=m.expressedstd)
     writetable(fname,df)
     return df
 end

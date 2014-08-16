@@ -8,8 +8,7 @@ function getfitness(c::Cell)
     idx = find(c.genome)
 
     # if length(idx)>1
-    #     eqpairs = map(x->c.promoter[x[1]]==c.promoter[x[2]],
-    #                   combinations(idx,2))
+    #     eqpairs = map(x->c.promoter[x[1]]==c.promoter[x[2]], combinations(idx,2))
     #     if length(eqpairs)>0 & sum(eqpairs)>0
     #         return 0.0
     #     end
@@ -27,12 +26,24 @@ function mutate(c::Cell)
     # idx = mutating(GL,MF)
     # switchon(idx, c.genome)
 
-    # mutate promoters)
+    # mutate promoters
     idx = mutating(GL, PF)
     if !isempty(idx)
-        c.promoter[idx] = rand(1:GL,length(idx))
+        c.promoter[idx] = rand(1:NP,length(idx))
     end
+    c.expressed = getexpressed(c.genome, c.promoter)
+
     c.fitness = getfitness(c)
+end
+
+function getexpressed(g::BitArray{1}, p::Array{Integer})
+    expressed = g
+    for combi in combinations(1:GL, 2)
+        if p[combi[1]] == p[combi[2]]
+            switchoff(combi, expressed)
+        end
+    end
+    expressed
 end
 
 function mutating(n::Int64, f::Float64)
@@ -64,5 +75,6 @@ end
 function display(c::Cell)
     println("Genome: ", c.genome)
     println("Promoter: ", c.promoter)
+    println("Expressed: ", c.expressed)
     println("Fitness: ", c.fitness)
 end
