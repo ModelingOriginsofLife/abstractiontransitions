@@ -37,7 +37,7 @@ function mutate(c::Cell)
 end
 
 function getexpressed(g::BitArray{1}, p::Array{Integer})
-    expressed = g
+    expressed = deepcopy(g)
     for combi in combinations(1:GL, 2)
         if p[combi[1]] == p[combi[2]]
             switchoff(combi, expressed)
