@@ -6,7 +6,8 @@ function getfitness(cells::Array{Cell,1})
 
     # compute average normalized cosine similarity
     # wp:Cosine_similarity#Angular_similarity
-    d = reduce((x,y)->hcat(x,y),map(x->int(x.genome),cells))
+    #d = reduce((x,y)->hcat(x,y),map(x->int(x.genome),cells))
+    d = reduce((x,y)->hcat(x,y),map(x->int(x.expressed),cells))
     if size(d,2)>1
         d = sum(1-2*acos(1-pairwise(CosineDist(),d))/pi)/(NC^2)
     else
@@ -16,7 +17,8 @@ function getfitness(cells::Array{Cell,1})
     # check if all functions are available
     # and assign average normalized cosine similarity if so
     # or 0.0 otherwise
-    s = reduce((x,y)->x+y, map(x->x.genome, cells))
+    #s = reduce((x,y)->x+y, map(x->x.genome, cells))
+    s = reduce((x,y)->x+y, map(x->x.expressed, cells))
     if map(x->x>0,s) == trues(GL)
         # s = 1./norm(s-0.99)
         s = d
@@ -53,7 +55,7 @@ function display(bf::Biofilm)
     println("Number of cells: ", length(bf.individuals))
     println("Total fitness: ", bf.fitness)
     for cell in bf.individuals
-        println("- ", cell.genome, ", fitness: ",    cell.fitness)
+        println("- ", cell.genome, " ", cell.promoter, " ", cell.expressed, ", fitness: ",    cell.fitness)
     end
 end
 
