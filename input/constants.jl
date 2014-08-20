@@ -1,7 +1,7 @@
 #constants
 const NB = 100 # number of biofilms
 const NC = 100 # number of cells per biofilm
-const NP = 5 # number of types of promoter
+const NP = 10 # number of types of promoter
 const GL = 10 # number of genes in a genome
 const FF = 10  # number of functions
 const MF = 0.001 # gene mutation factor
