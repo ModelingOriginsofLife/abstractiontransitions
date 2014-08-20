@@ -96,7 +96,7 @@ def main(argv):
 
 def make_timeseries(outname, data):
     plottype = outname.split('/')[-1][:-4]
-    figname = outname[:-4] + '.png'
+    figname = outname[:-4] + '.pdf'
 
     gen = np.linspace(1, data.shape[0], data.shape[0])
     mean = data.mean(1)
@@ -106,7 +106,7 @@ def make_timeseries(outname, data):
                 linestyle='-', linewidth=5, color='k',
                 marker='o',markersize=12,
                 mec='k',mfc='r')
-    plt.errorbar(gen, mean, yerr=std, linestyle="None", marker="None", color="k")   
+    plt.errorbar(gen, mean, yerr=std, linestyle="None", marker="None", color="k")
     plt.xlim(gen[0], gen[-1])
     plt.ylabel(plottype, fontsize=30,labelpad=20,fontweight='normal')
     plt.xlabel('generation',fontsize=30,labelpad=10)
@@ -117,7 +117,7 @@ def make_timeseries(outname, data):
 
 def make_histogram(outname, data):
     plottype = outname.split('/')[-1][:-4]
-    figname = outname[:-4] + '_hist.png'
+    figname = outname[:-4] + '_hist.pdf'
 
     nr = len(data[:,0])
     nc = len(data[0,:])

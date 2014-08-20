@@ -6,6 +6,27 @@ function plot2(simdir)
         println(fname)
         run(`python plotdata.py -f $fname`)
     end
+
+    plotspdf = joinpath(simdir,"plots.pdf")
+    plotyvar = ["biofitness",
+                "biofitness_hist",
+                "fitness",
+                "fitness_hist",
+                "numfuncs_hist",
+                "numfuncs",
+                "expressed",
+                "expressed_hist",
+                "diversity",
+                "diversity_hist",
+                "sporesize",
+                "sporesize_hist"]
+
+    plotspdfs = map(x->joinpath(simdir,string(x,".pdf")),plotyvar)
+    run(`gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$plotspdf
+            -dBATCH $plotspdfs`)
+    println("\nview plots with:")
+    outputpath = replace(plotspdf,r"\.\./","")
+    println("evince $outputpath")
 end
 
 
