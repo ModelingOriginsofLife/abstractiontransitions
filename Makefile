@@ -20,7 +20,11 @@ PARDEP=parload.jl
 # alone
 
 default:
+ifdef folder
+	cd src; julia $(TOPFILE) $(folder); cd ..
+else
 	cd src; julia $(TOPFILE); cd ..
+endif
 
 mc:
 	cd src; julia $(MCFILE); cd ..

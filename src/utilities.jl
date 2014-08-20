@@ -2,7 +2,7 @@ flatten{T}(a::Array{T,1}) = any(map(x->isa(x,Array),a))? flatten(vcat(map(flatte
 flatten{T}(a::Array{T}) = reshape(a,prod(size(a)))
 flatten(a::Number)=a
 
-function gentimestamp()
+function gentimestamp(; short=false)
     dt = now()
     dty = year(dt)
     dtm = month(dt)
@@ -10,7 +10,11 @@ function gentimestamp()
     dth = hour(dt)
     dtmin = minute(dt)
     dts = second(dt)
-    return "$dty$dtm$dtd\_$dth$dtmin$dts"
+    if short
+        return "$dty$dtm$dtd"
+    else    
+        return "$dty$dtm$dtd\_$dth$dtmin$dts"
+    end
 end
 
 sigmoid(x, a) = 1/(1+exp(-a*x))

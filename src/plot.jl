@@ -12,7 +12,7 @@ function plot(simdir)
     # spawn(`evince $plotspdf`)
 end
 
-if length(ARGS)>0
-    simdir=joinpath("..","output",ARGS[1])
-    plot(simdir)
-end
+#if length(ARGS)>0
+#    simdir=joinpath("..","output",ARGS[1])
+#    plot(simdir)
+#end

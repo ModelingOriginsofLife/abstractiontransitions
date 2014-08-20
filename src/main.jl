@@ -7,7 +7,11 @@ require("include.jl")
 # setup
 #-------------------------
 
-timestamp = gentimestamp()
+if length(ARGS) == 1
+    timestamp = string(gentimestamp(short=true), "_", ARGS[1])
+else
+    timestamp = gentimestamp()
+end
 
 simdir = joinpath(outdir,timestamp)
 run(`mkdir $simdir`)
