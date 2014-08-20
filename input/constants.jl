@@ -13,5 +13,5 @@ const MEASPERIOD = convert(Int64,round(1/FRACMEAS))
 const NUMMEAS = convert(Int64,round(MAXTIME/MEASPERIOD) + 1)
 
 #flags
-const PLOTFLAG = true
+const PLOTFLAG = false
 const DEBUGFLAG = false

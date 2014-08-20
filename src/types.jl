@@ -17,7 +17,7 @@ type Cell
     function Cell(genomelength::Integer)
         # dist = Categorical([.7,.2,.1])
         # numgenes = rand(dist)
-        numgenes = 1 
+        numgenes = 1
         inds = rand(1:genomelength, numgenes)
         genebitstring = falses(genomelength)
         genebitstring[inds] = true
@@ -81,6 +81,16 @@ type Measure
     sporesizestd::Vector{Float64} # std of sporesize for biofilms
     expressed::Vector{Float64} # average sporesize for biofilms
     expressedstd::Vector{Float64} # std of sporesize for biofilms
+end
+
+type MeasureAll
+    time::Vector{Int64}
+    biofitness::Matrix{Float64} # population fitness
+    fitness::Matrix{Float64} # population fitness
+    numfuncs::Matrix{Float64} # number of functions per cell
+    diversity::Matrix{Float64} # number of types per biofilm
+    sporesize::Matrix{Float64} # sporesize for biofilms
+    expressed::Matrix{Float64} # sporesize for biofilms
 end
 
 typealias Time Int64

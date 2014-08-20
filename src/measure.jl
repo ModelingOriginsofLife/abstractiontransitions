@@ -19,6 +19,19 @@ function Measure()
                  sporesize,sporesizestd,expressed,expressedstd)
 end
 
+function MeasureAll()
+    time = zeros(Int64,NUMMEAS)
+    biofitness = zeros(Float64,NUMMEAS,NB)
+    fitness = zeros(Float64,NUMMEAS,NB*NC)
+    numfuncs = zeros(Float64,NUMMEAS,NB*NC)
+    diversity = zeros(Float64,NUMMEAS,NB)
+    sporesize = zeros(Float64,NUMMEAS,NB)
+    expressed = zeros(Float64,NUMMEAS,NB*NC)
+
+    MeasureAll(time,biofitness,fitness,numfuncs,diversity,
+                 sporesize,expressed)
+end
+
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
     # Array{Array{Cell,1},1}
     cellsinbiofilms = map(x->x.individuals,pop.individuals)
@@ -54,6 +67,42 @@ function measure(pop::Population, m::Measure, t::Time, n::Int64)
 
 end
 
+function measure(pop::Population, m::MeasureAll, t::Time, n::Int64)
+    # Array{Array{Cell,1},1}
+    cellsinbiofilms = map(x->x.individuals,pop.individuals)
+
+    # Array{Array{BitArray{1},1},1}
+    genomesincells = map(x->map(y->y.genome,x),cellsinbiofilms)
+
+    # store measurements in Measure
+    m.time[n] = t
+    fitvect = map(x->x.fitness, flatten(cellsinbiofilms))
+    biofitvect = map(x->x.fitness, pop.individuals)
+
+    numfuncsvect = map(x->sum(x.genome),flatten(cellsinbiofilms))
+    expressedvect = map(x->sum(x.expressed),flatten(cellsinbiofilms))
+    diversityvect = map(x->length(unique(x)),genomesincells)
+    sporesizevect = map(x->x.sporesize,pop.individuals)
+
+    m.biofitness[n,:] = biofitvect
+    m.fitness[n,:] = fitvect
+    m.numfuncs[n,:] = numfuncsvect
+    m.diversity[n,:] = diversityvect
+    m.sporesize[n,:] = sporesizevect
+    m.expressed[n,:] = expressedvect
+
+    @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f, expressed: %5.3f, diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f\n",
+                t,
+                n,
+                mean(m.fitness[n,:]),
+                mean(m.numfuncs[n,:]),
+                mean(m.expressed[n,:]),
+                mean(m.diversity[n,:]),
+                mean(m.biofitness[n,:]),
+                mean(m.sporesize[n,:]))
+
+end
+
 function save(m::Measure, fname::String)
     df = DataFrame(time=m.time,
                    biofitness=m.biofitness,
@@ -70,4 +119,15 @@ function save(m::Measure, fname::String)
                    expressedstd=m.expressedstd)
     writetable(fname,df)
     return df
+end
+
+function save(m::MeasureAll, pathroot::String)
+
+    for field in MeasureAll.names
+      if !(string(field)=="time")
+        writedlm(joinpath(pathroot,string(field,".csv")),getfield(m,field))
+      end
+    end
+    return 0
+
 end
