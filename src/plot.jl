@@ -1,3 +1,14 @@
+function plot2(simdir)
+
+    outputs = filter(x->contains(x,"csv"), readdir(simdir))
+    for file in outputs
+        fname = joinpath(simdir, file)
+        println(fname)
+        run(`python plotdata.py -f $fname`)
+    end
+end
+
+
 function plot(simdir)
     plotspdf = joinpath(simdir,"plots.pdf")
     plotxvar = "time"
@@ -12,7 +23,7 @@ function plot(simdir)
     # spawn(`evince $plotspdf`)
 end
 
-#if length(ARGS)>0
-#    simdir=joinpath("..","output",ARGS[1])
-#    plot(simdir)
-#end
+if length(ARGS)>0
+    simdir=joinpath("..",ARGS[1])
+    plot2(simdir)
+end
