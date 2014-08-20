@@ -29,7 +29,7 @@ for t=1:MAXTIME
 
     if maximum( map(x->x.fitness,pop.individuals) ) == 0
        println("No viable biofilm anymore. Saving and exiting.")
-       t = MAXTIME
+       break
     end
 
     if (mod(t-1,MEASPERIOD)==0) | (t==MAXTIME)
