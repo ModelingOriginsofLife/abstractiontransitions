@@ -17,8 +17,7 @@ type Cell
     function Cell(genomelength::Integer)
         # dist = Categorical([.7,.2,.1])
         # numgenes = rand(dist)
-        numgenes = 1
-        inds = rand(1:genomelength, numgenes)
+        inds = rand(1:genomelength, NG)
         genebitstring = falses(genomelength)
         genebitstring[inds] = true
         promoter = convert(Array{Integer}, rand(1:NP, genomelength))
