@@ -1,7 +1,7 @@
 Cell() = Cell(GL)
 
 function getfitness(gen::BitArray{1})
-    1-sum(gen)/GL
+    1-(sum(gen)/GL)^CFC
 end
 
 function getfitness(c::Cell)
