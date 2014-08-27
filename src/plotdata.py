@@ -19,7 +19,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import rc
 import pandas as pd
-#import d3py
+# import brewer2mpl
+# import d3py
 
 def readdata(filename,printlevel=0):
     """
@@ -118,6 +119,7 @@ def make_timeseries(outname, data):
 def make_histogram(outname, data):
     plottype = outname.split('/')[-1][:-4]
     figname = outname[:-4] + '_hist.pdf'
+    # bmap = brewer2mpl.get_map('YlOrRd', 'Sequential', 9)
 
     nr = len(data[:,0])
     nc = len(data[0,:])
@@ -130,7 +132,12 @@ def make_histogram(outname, data):
     time = time.reshape(nr*nc)
 
     fig1=plt.figure(num=1,figsize=(12,9),facecolor='w')
-    plt.hist2d(time, data)
+    ax1f1 = fig1.add_subplot(111)
+    plt.hist2d(time, data, cmap='YlOrRd')
+    # plt.hist2d(time, data, cmap=bmap.get_mpl_colormap(N=1000, gamma=2.0))
+    cbar = plt.colorbar()
+    cbar.ax.tick_params(labelsize=30)
+    ax1f1.tick_params(axis='both',labelsize=30)
     plt.savefig(figname, bbox_inches='tight', facecolor=fig1.get_facecolor(), edgecolor='none')
     plt.close()
 
