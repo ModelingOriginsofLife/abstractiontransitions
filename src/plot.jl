@@ -1,10 +1,16 @@
 function plot2(simdir)
 
+    include(joinpath(simdir,"constants.jl"))
     outputs = filter(x->contains(x,"csv"), readdir(simdir))
     for file in outputs
         fname = joinpath(simdir, file)
         println(fname)
-        run(`python plotdata.py -f $fname`)
+
+        if isdefined(:CONSTANTS)
+            run(`python plotdata.py -f $fname -p $CONSTANTS`)
+        else
+            run(`python plotdata.py -f $fname`)
+        end
     end
 
     plotspdf = joinpath(simdir,"$(split(simdir,'/')[3]).pdf")

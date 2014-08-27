@@ -48,6 +48,7 @@ def main(argv):
     parser.add_argument('-y', '--y-list', type=str, nargs='+', help="list of names of y-axis data")
     parser.add_argument('-x', '--x-data', type=str, default="time", help="the name of the x-axis data")
     parser.add_argument('-f', '--filename', type=str, help="csv file to plot")
+    parser.add_argument('-p', '--param-list', type=float, nargs='+', help="list of parameters used in simulation")
     options = parser.parse_args(argv[1:])
 
     if options.filename:

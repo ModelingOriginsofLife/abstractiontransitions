@@ -16,7 +16,7 @@ end
 simdir = joinpath(outdir,timestamp)
 run(`mkdir $simdir`)
 configpath = joinpath(indir,configfile)
-run(`cp $configpath $simdir`)
+run(`cp $configpath $simdir/constants.jl`)
 
 #----------------------------------
 println("------------------------------")
