@@ -7,7 +7,7 @@ function plot2(simdir)
         run(`python plotdata.py -f $fname`)
     end
 
-    plotspdf = joinpath(simdir,"plots.pdf")
+    plotspdf = joinpath(simdir,"$(split(simdir,'/')[3]).pdf")
     plotyvar = ["biofitness",
                 "biofitness_hist",
                 "fitness",
