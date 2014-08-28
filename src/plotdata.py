@@ -139,6 +139,8 @@ def make_histogram(outname, data):
     cbar = plt.colorbar()
     cbar.ax.tick_params(labelsize=30)
     ax1f1.tick_params(axis='both',labelsize=30)
+    plt.xlabel('time', fontsize=30, labelpad=10)
+    plt.ylabel(plottype, fontsize=30, labelpad=10)
     plt.savefig(figname, bbox_inches='tight', facecolor=fig1.get_facecolor(), edgecolor='none')
     plt.close()
 
