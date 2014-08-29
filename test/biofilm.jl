@@ -14,6 +14,16 @@ function testcells()
     grow(biofilm)
     @test biofilm.individuals[2].genome == biofilm.individuals[3].genome
     @test biofilm.individuals[2].promoter == biofilm.individuals[3].promoter
+
+    genome = trues(GL)
+    promoter = [1:GL]
+    for cell in biofilm.individuals
+        cell.genome = genome
+        cell.promoter = promoter
+        cell.expressed = genome
+    end
+
+    @test_approx_eq(getfitness(biofilm.individuals), 1.0)
 end
 
 testcells()

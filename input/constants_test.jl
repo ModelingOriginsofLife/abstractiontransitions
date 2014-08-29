@@ -8,7 +8,10 @@ const GL = 5 # number of genes in a genome
 
 const MF = 0.001 # gene mutation factor
 const PF = 0.01 # promoter mutation factor
+
 const CFC = 1.0 # base of cell fitness function exponent
+const BFP = 1.0 # Biofilm Fitness Parameter
+
 const MAXTIME = 100 # number of iterations
 const FRACMEAS = 10/MAXTIME
 const MEASPERIOD = convert(Int64,round(1/FRACMEAS))
@@ -26,6 +29,7 @@ CONSTANTS = [NB,
              MF,
              PF,
              CFC,
+             BFP,
              MAXTIME,
              FRACMEAS,
              MEASPERIOD,
