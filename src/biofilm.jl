@@ -61,19 +61,15 @@ function getspore(bf::Biofilm)
     genepool = Array(BitArray{1}, 0)
     for i in idx
         candidate = bf.individuals[i]
-        if isempty(genepool)
-            push!(genepool, candidate.genome)
-            push!(spore, i)
-        elseif sum(map(x->x==candidate.genome, genepool)) == 0
-            push!(genepool, candidate.genome)
-            push!(spore, i)
-        end
-        if map(x-> x>0, sum(genepool)) == trues(GL)
+        sporeSize = candidate.wantSporeSize
+        push!(genepool, candidate.genome)
+        push!(spore, i)
+        if length(spore) == sporeSize
             return spore
         end
     end
     if DEBUGFLAG
-        println("no possible spore combination ", sum(genepool))
+        println("Something fishy in getspore(), we should not be here.")
     end
     return 0
 end

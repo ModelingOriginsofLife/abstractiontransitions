@@ -13,6 +13,7 @@ type Cell
     promoter::Array{Integer,1}
     expressed::BitArray{1}
     fitness::Float64
+    wantSporeSize::Integer
 
     function Cell(genomelength::Integer)
         # dist = Categorical([.7,.2,.1])
@@ -25,7 +26,7 @@ type Cell
 
         fitness = getfitness(genebitstring)
 
-        new(genebitstring, promoter, expressed, fitness)
+        new(genebitstring, promoter, expressed, fitness, ISS)
     end
 end
 
