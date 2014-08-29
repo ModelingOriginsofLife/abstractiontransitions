@@ -34,6 +34,10 @@ function mutate(c::Cell)
     c.expressed = getexpressed(c.genome, c.promoter)
 
     c.fitness = getfitness(c)
+    if rand() < MF
+        s = sign(rand() - 0.5)
+        c.wantSporeSize += s
+    end
 end
 
 function getexpressed(g::BitArray{1}, p::Array{Integer})
