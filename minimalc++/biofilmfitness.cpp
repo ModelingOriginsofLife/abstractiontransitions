@@ -26,10 +26,16 @@ int prand(double P)
 class Cell
 {
 	public:
-		int functions[NFUNC];
+		vector<int> functions;
 		
 		void Mutate();
+		Cell();
 };
+
+Cell::Cell()
+{
+	functions.resize(NFUNC,1);
+}
 
 void Cell::Mutate()
 {
