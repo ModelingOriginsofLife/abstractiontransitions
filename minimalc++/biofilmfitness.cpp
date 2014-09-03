@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
-
 #include <vector>
+
+#include <mpi.h>
 
 using namespace std;
 
@@ -181,8 +182,12 @@ int main(int argc, char **argv)
 {
 	Population Soup;	
 	FILE *f;
+	int thread_id;
 	
-	rseed = atoi(argv[1]);
+	MPI_Init(NULL,NULL);
+	MPI_Comm_rank(MPI_COMM_WORLD,  &thread_id);
+	
+	rseed = atoi(argv[1]) + thread_id;
 	int Ngen = atoi(argv[2]);
 	MRATE = atof(argv[3]);
 	NFUNC = atoi(argv[4]);
@@ -206,8 +211,12 @@ int main(int argc, char **argv)
 		for (int i=0;i<Ngen;i++)
 			Soup.Iterate(ss);
 			
-		f=fopen(argv[7],"a");
+		printf("Ping!\n");
+		sprintf(Str,"%s_%d.txt",argv[7],thread_id);
+		f=fopen(Str,"a");
 		fprintf(f,"%d %d %d\n",ss,Soup.failures, Soup.attempts);
 		fclose(f);
 	}
+	
+	MPI_Finalize();
 }
