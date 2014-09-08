@@ -85,8 +85,10 @@ end
 ######################################################
 type Population
     individuals::Array{Biofilm,1}
+    success::Integer
+    attempts::Integer
 
-    Population(size::Integer) = new([Biofilm() for i in [1:size]])
+    Population(size::Integer) = new([Biofilm() for i in [1:size]], 0, 0)
 end
 
 type Measure
