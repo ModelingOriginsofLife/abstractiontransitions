@@ -37,7 +37,7 @@ function display(bf::Biofilm)
     println("Number of cells: ", length(bf.individuals))
     println("Total fitness: ", bf.fitness)
     for cell in bf.individuals
-        println("- ", cell.genome, " ", cell.promoter, " ", cell.expressed, ", fitness: ",    cell.fitness)
+        println("- ", cell.genome, " ", cell.promoter, " ", cell.expressed, ", fitness: ", cell.fitness)
     end
 end
 
@@ -56,15 +56,25 @@ end
 
 # Returns a set of cells which possess all possible functions
 function getspore(bf::Biofilm)
-    idx = sample([1:NC], NC, replace=false)
     spore = Array(Integer, 0)
     genepool = Array(BitArray{1}, 0)
+
+    if GETSPORE == "uniform"
+        idx = sample([1:NC], NC, replace=false)
+    elseif GETSPORE == "fitness"
+        fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
+        idx = sample([1:NC], fitvec, replace=false)
+    end
+
     for i in idx
         candidate = bf.individuals[i]
         sporeSize = candidate.wantSporeSize
         push!(genepool, candidate.genome)
         push!(spore, i)
-        if length(spore) == sporeSize
+        case1 = (length(spore) == sporeSize) && (SPORESIZE == "firstPickChooses")
+        case2 = (length(spore) == CSS) && (SPORESIZE == "constant")
+        case3 = (map(x-> x>0, sum(genepool)) == trues(GL) && (SPORESIZE == "complete"))
+        if case1 || case2 || case3
             return spore
         end
     end

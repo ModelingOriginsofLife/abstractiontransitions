@@ -21,7 +21,11 @@ type Cell
         inds = rand(1:genomelength, NG)
         genebitstring = falses(genomelength)
         genebitstring[inds] = true
-        promoter = convert(Array{Integer}, rand(1:NP, genomelength))
+        if USEPROMOTERS == true
+            promoter = convert(Array{Integer}, rand(1:NP, genomelength))
+        elseif USEPROMOTERS == false
+            promoter = convert(Array{Integer}, [1:genomelength])
+        end
         expressed = getexpressed(genebitstring, promoter)
 
         fitness = getfitness(genebitstring)

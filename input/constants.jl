@@ -4,16 +4,19 @@
 
 # CELL TYPE
 const USEPROMOTERS = false
-const CELLFITNESS = 'uniform' # choices are: uniform, type1, type2
+#const CELLFITNESS = "uniform" # choices are: uniform, type1, type2
 
 # BIOFILM TYPE
-const DIVERSITY = 'random' # choices are: random, homogeneous, or any integer
-const BIOFITNESS = 'uniform' # choices are: uniform, type1, type2
+#const DIVERSITY = "random" # choices are: random, homogeneous, or any integer
+#const BIOFITNESS = "uniform" # choices are: uniform, type1, type2
 
 # DYNAMICS
-const GROWTH = 'fitness' # fitness or uniform
-const GETSPORE = 'uniform' # uniform, constant, varying, complete
-const REPRODUCE = 'fitness' # fitness, uniform, duplicate
+#const GROWTH = "fitness" # fitness or uniform
+const SPORESIZE = "constant" # constant, firstPickChooses, complete
+const GETSPORE = "uniform" # uniform, fitness
+const CSS = 10 #constant spore size
+
+const REPRODUCE = "fitness" # fitness, uniform, duplicate
 
 ###################################
 ###### CHOOSE MODEL CONSTANTS #####
@@ -28,7 +31,7 @@ const NP = 10 # number of types of promoter
 const GL = 10 # number of genes in a genome
 const ISS = 40 # Initial Spore Size
 
-const MF = 0.001 # gene mutation factor
+const MF = 0.002 # gene mutation factor
 const PF = 0.001 # promoter mutation factor
 
 const CFC = 1.0 # base of cell fitness function exponent
