@@ -271,7 +271,6 @@ int main(int argc, char **argv)
 		for (int i=0;i<Ngen;i++)
 			Soup.Iterate(ss);
 			
-		printf("Ping!\n");
 		sprintf(Str,"%s_%d.txt",argv[7],thread_id);
 		f=fopen(Str,"a");
 		fprintf(f,"%d %d %d\n",ss,Soup.failures, Soup.attempts);
