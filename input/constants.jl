@@ -1,3 +1,24 @@
+###################################
+######## CHOOSE MODEL TYPE ########
+###################################
+
+# CELL TYPE
+const USEPROMOTERS = false
+const CELLFITNESS = 'uniform' # choices are: uniform, type1, type2
+
+# BIOFILM TYPE
+const DIVERSITY = 'random' # choices are: random, homogeneous, or any integer
+const BIOFITNESS = 'uniform' # choices are: uniform, type1, type2
+
+# DYNAMICS
+const GROWTH = 'fitness' # fitness or uniform
+const GETSPORE = 'uniform' # uniform, constant, varying, complete
+const REPRODUCE = 'fitness' # fitness, uniform, duplicate
+
+###################################
+###### CHOOSE MODEL CONSTANTS #####
+###################################
+
 #constants
 const NB = 100 # number of biofilms
 const NC = 100 # number of cells per biofilm
