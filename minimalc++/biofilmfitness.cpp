@@ -27,15 +27,26 @@ int prand(double P)
 class Cell
 {
 	public:
-		vector<int> functions;
+		char *functions;
 		
 		void Mutate();
-		Cell();
+		void alloc();
+		
+		Cell& operator=(Cell &b);
 };
 
-Cell::Cell()
+Cell *spore;
+
+Cell& Cell::operator=(Cell &b)
 {
-	functions.resize(NFUNC,1);
+	memcpy(functions, b.functions, sizeof(char)*NFUNC);
+	
+	return *this;
+}
+
+void Cell::alloc()
+{
+	functions = (char*)malloc(sizeof(char)*NFUNC);
 }
 
 void Cell::Mutate()
@@ -50,67 +61,109 @@ void Cell::Mutate()
 class Biofilm
 {
 	public:
-		vector<Cell> population;
+		Cell *population;
 		
 		void initialize();
-		void growFromSpore(vector<Cell> spore);
+		void growFromSpore(Biofilm *parent, int sporesize);
 		int surviveNthGeneration(int N, int sporesize);
 		int hasAllFunc();
+		void alloc();
+
+		Biofilm& operator=(Biofilm &b);
 };
+
+Biofilm& Biofilm::operator=(Biofilm &b)
+{
+	for (int i=0;i<BIOPOP;i++)
+	{
+		population[i] = b.population[i];
+	}
+
+	return *this;
+}
+
+void Biofilm::alloc()
+{
+	population = (Cell*)malloc(sizeof(Cell)*BIOPOP);
+	for (int i=0;i<BIOPOP;i++)
+	{
+		population[i].alloc();
+	}
+}
 
 class Population
 {
 	public:
-		vector<Biofilm> population;
+		Biofilm *population;
+		Biofilm *newpop;
+		int pCount;
+		
 		int failures, attempts;
 		
 		void Iterate(int sporesize);
+		void alloc();
+		
+		Population& operator=(Population &b);
 };
+
+Population& Population::operator=(Population &b)
+{
+	for (int i=0;i<CARRYCAP;i++)
+	{
+		population[i] = b.population[i];
+	}
+
+	return *this;
+}
+
+void Population::alloc()
+{	
+	population = (Biofilm*)malloc(sizeof(Biofilm)*CARRYCAP);
+	newpop = (Biofilm*)malloc(sizeof(Biofilm)*CARRYCAP*2);
+	
+	for (int i=0;i<CARRYCAP;i++)
+		population[i].alloc();
+
+	for (int i=0;i<2*CARRYCAP;i++)
+		newpop[i].alloc();
+}
 
 void Population::Iterate(int sporesize)
 {
-	int i,j,k;
-	vector<Biofilm> newpop;
+	int i,j,k;	
+	int npCount = 0;
 	
-	for (i=0;i<population.size();i++)
+	for (i=0;i<pCount;i++)
 	{
 		for (k=0;k<2;k++)
 		{
-			Biofilm B;
-			vector<Cell> spore;
-		
-			spore.clear();
-		
-			for (int j=0;j<sporesize;j++)
-				spore.push_back(population[i].population[rand()%population[i].population.size()]);
-		
-			B.growFromSpore(spore);
+			newpop[npCount].growFromSpore(&population[i], sporesize);
 		
 			attempts++;
-			if (B.hasAllFunc()) newpop.push_back(B); else failures++;
+			if (newpop[npCount].hasAllFunc()) { npCount++; } else failures++;
 		}
 	}
 	
-	while (newpop.size() > CARRYCAP)
+	while (npCount > CARRYCAP)
 	{
-		newpop.erase(newpop.begin() + rand()%newpop.size());
+		i = rand()%npCount;
+		
+		newpop[i] = newpop[npCount-1];
+		npCount--;
 	}
 	
-	population = newpop;
+	for (i=0;i<npCount;i++)
+		population[i] = newpop[i];
+		
+	pCount = npCount;
 }
 
 void Biofilm::initialize()
 {
-	population.clear();
-	
 	for (int i=0;i<BIOPOP;i++)
 	{
-		Cell C;
-		
 		for (int j=0;j<NFUNC;j++)
-			C.functions[j] = 1;
-		
-		population.push_back(C);
+			population[i].functions[j] = 1;
 	}
 }
 
@@ -120,7 +173,7 @@ int Biofilm::hasAllFunc()
 	
 	memset(func,0,sizeof(int)*NFUNC);
 	
-	for (int i=0;i<population.size();i++)
+	for (int i=0;i<BIOPOP;i++)
 	{
 		for (int j=0;j<NFUNC;j++)
 		{
@@ -146,11 +199,7 @@ int Biofilm::surviveNthGeneration(int N, int sporesize)
 	
 	do
 	{
-		spore.clear();
-		for (int j=0;j<sporesize;j++)
-			spore.push_back(B.population[rand()%B.population.size()]);
-			
-		B.growFromSpore(spore);
+		B.growFromSpore(&B,sporesize);
 	
 		if (!B.hasAllFunc())
 			return 0;
@@ -161,26 +210,27 @@ int Biofilm::surviveNthGeneration(int N, int sporesize)
 	return 1;
 }
 
-void Biofilm::growFromSpore(vector<Cell> spore)
+void Biofilm::growFromSpore(Biofilm *parent, int sporesize)
 {
-	int N = spore.size();
+	int N = sporesize;
 	
-	population = spore;
+	for (int i=0;i<sporesize;i++)
+	{
+		spore[i] = parent->population[rand()%BIOPOP];
+		population[i] = spore[i];
+	}
 	
 	for (;N<BIOPOP;N++)
 	{
-		Cell newCell = spore[rand()%spore.size()];
-		
-		population.push_back(newCell);
+		population[N] = spore[rand()%sporesize];
 	}
 	
-	for (int i=0;i<population.size();i++)
+	for (int i=0;i<BIOPOP;i++)
 		population[i].Mutate();
 }
 
 int main(int argc, char **argv)
 {
-	Population Soup;	
 	FILE *f;
 	int thread_id;
 	
@@ -198,16 +248,26 @@ int main(int argc, char **argv)
 	
 	srand(rseed);
 	
+	spore = (Cell*)malloc(BIOPOP*sizeof(Cell));
+	
+	for (int i=0;i<BIOPOP;i++)
+	{
+		spore[i].alloc();
+	}
+	
+	Population Soup;
+	
+	Soup.alloc();
+	
 	for (int ss = 1;ss<=BIOPOP;ss++)
 	{
-		Soup.population.clear(); Soup.failures = 0; Soup.attempts = 0;
+		Soup.failures = 0; Soup.attempts = 0;
 		for (int i=0;i<CARRYCAP;i++)
 		{
-			Biofilm LUCA;		
-			LUCA.initialize();
-			Soup.population.push_back(LUCA);
+			Soup.population[i].initialize();
 		}
-	
+		Soup.pCount = CARRYCAP;
+		
 		for (int i=0;i<Ngen;i++)
 			Soup.Iterate(ss);
 			
