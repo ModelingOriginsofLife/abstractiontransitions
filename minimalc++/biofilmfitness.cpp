@@ -128,29 +128,51 @@ void Population::alloc()
 		newpop[i].alloc();
 }
 
+int *randomOrder;
+
+void getRandomOrder(int l)
+{
+	for (int i=0;i<l;i++)
+		randomOrder[i] = i;
+		
+	for (int i=0;i<l-1;i++)
+	{
+		int j = rand()%(l-i)+i;
+		int buf = randomOrder[i];
+		randomOrder[i] = randomOrder[j];
+		randomOrder[j] = buf;
+	}
+}
+
 void Population::Iterate(int sporesize)
 {
 	int i,j,k;	
 	int npCount = 0;
 	
-	for (i=0;i<pCount;i++)
+	getRandomOrder(pCount);
+	for (i=0;(i<pCount)&&(npCount<CARRYCAP);i++)
 	{
+		j = randomOrder[i];
 		for (k=0;k<2;k++)
 		{
-			newpop[npCount].growFromSpore(&population[i], sporesize);
+			if (npCount<CARRYCAP)
+			{
+				newpop[npCount].growFromSpore(&population[j], sporesize);
 		
-			attempts++;
-			if (newpop[npCount].hasAllFunc()) { npCount++; } else failures++;
+				attempts++;
+				if (newpop[npCount].hasAllFunc()) { npCount++; } else failures++;
+			}
 		}
 	}
 	
-	while (npCount > CARRYCAP)
+/*	while (npCount > CARRYCAP)
 	{
 		i = rand()%npCount;
 		
 		newpop[i] = newpop[npCount-1];
 		npCount--;
 	}
+	*/
 	
 	for (i=0;i<npCount;i++)
 		population[i] = newpop[i];
@@ -216,13 +238,12 @@ void Biofilm::growFromSpore(Biofilm *parent, int sporesize)
 	
 	for (int i=0;i<sporesize;i++)
 	{
-		spore[i] = parent->population[rand()%BIOPOP];
-		population[i] = spore[i];
+		population[i] = parent->population[rand()%BIOPOP];		
 	}
 	
 	for (;N<BIOPOP;N++)
 	{
-		population[N] = spore[rand()%sporesize];
+		population[N] = population[rand()%sporesize];
 	}
 	
 	for (int i=0;i<BIOPOP;i++)
@@ -244,17 +265,12 @@ int main(int argc, char **argv)
 	BIOPOP = atoi(argv[5]);
 	CARRYCAP = atoi(argv[6]);
 	
+	randomOrder = (int*)malloc(sizeof(int) * CARRYCAP);
+		
 	char Str[512];
 	
 	srand(rseed);
-	
-	spore = (Cell*)malloc(BIOPOP*sizeof(Cell));
-	
-	for (int i=0;i<BIOPOP;i++)
-	{
-		spore[i].alloc();
-	}
-	
+		
 	Population Soup;
 	
 	Soup.alloc();
