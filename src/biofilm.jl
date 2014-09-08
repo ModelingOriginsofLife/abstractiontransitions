@@ -16,7 +16,7 @@ function grow(bf::Biofilm)
     ncells = length(bf.individuals)
     for i in range(1, NC-ncells)
         # horizontal gene transfer
-        if rand() < 5*MF
+        if rand() < HT
             idx = sample([1:length(bf.individuals)], 2)
             gidx = sample([1:GL])
             bf.individuals[idx[1]].genome[gidx] = bf.individuals[idx[2]].genome[gidx]
