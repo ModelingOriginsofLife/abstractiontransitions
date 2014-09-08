@@ -1,48 +1,63 @@
-###################################
-######## CHOOSE MODEL TYPE ########
-###################################
+##################################
+### Population size, biofilm size
+##################################
 
-# CELL TYPE
-const USEPROMOTERS = false
-#const CELLFITNESS = "uniform" # choices are: uniform, type1, type2
-
-# BIOFILM TYPE
-#const DIVERSITY = "random" # choices are: random, homogeneous, or any integer
-#const BIOFITNESS = "uniform" # choices are: uniform, type1, type2
-
-# DYNAMICS
-#const GROWTH = "fitness" # fitness or uniform
-const SPORESIZE = "constant" # constant, firstPickChooses, complete
-const GETSPORE = "uniform" # uniform, fitness
-const CSS = 10 #constant spore size
-
-const REPRODUCE = "fitness" # fitness, uniform, duplicate
-
-###################################
-###### CHOOSE MODEL CONSTANTS #####
-###################################
-
-#constants
 const NB = 100 # number of biofilms
 const NC = 100 # number of cells per biofilm
 
-const NG = 1  # initial number of gene per cell
-const NP = 10 # number of types of promoter
+####################
+### Cell definition
+####################
+
 const GL = 10 # number of genes in a genome
+
+const DIVERSITY = 2 # choices are: "random", "default", or any integer
+const NG = 1  # initial number of gene per cell, used in "default" only.
+
+const SPORESIZE = "constant" # constant, firstPickChooses, complete
 const ISS = 40 # Initial Spore Size
 
-const MF = 0.002 # gene mutation factor
-const PF = 0.001 # promoter mutation factor
+const USEPROMOTERS = false
+const NP = 10 # number of types of promoter
 
-const CFC = 1.0 # base of cell fitness function exponent
+#######################
+### Sampling behaviors
+#######################
+
+# pick members of the spore based on "uniform" or "fitness" sampling
+const GETSPORE = "uniform"
+# pick duplicating cell based on "fitness" or "uniform" sampling
+const GROW = "uniform"
+# exponent of cell fitness function
+const CFC = 1.0
+
+# pick reproducing biofilms basef on "fitness" or "uniform sampling"
+# "duplicate" allow each biofilm to (try and) reproduce twice in theory.
+# CAUTION: THIS MAY BE POORLY IMPLEMENTED.
+const REPRODUCE = "duplicate" # population. based on fitness, uniform, duplicate
 const BFP = 1.0 # Biofilm Fitness Parameter
+
+
+### Mutations
+const MF = 0.000 # gene mutation factor
+const PF = 0.000 # promoter mutation factor
+const HT = 0.000 # horizontal gene transfer
+
+######################################################################
+
+##################################
+### Simulation related parameters
+##################################
 
 const MAXTIME = 5000 # number of iterations
 const FRACMEAS = 50/MAXTIME
 const MEASPERIOD = convert(Int64,round(1/FRACMEAS))
 const NUMMEAS = convert(Int64,round(MAXTIME/MEASPERIOD) + 1)
 
-#flags
+##########
+### Flags
+##########
+
 const PLOTFLAG = false
 const DEBUGFLAG = false
 

@@ -77,7 +77,7 @@ function getspore(bf::Biofilm)
         push!(genepool, candidate.genome)
         push!(spore, i)
         case1 = (length(spore) == sporeSize) && (SPORESIZE == "firstPickChooses")
-        case2 = (length(spore) == CSS) && (SPORESIZE == "constant")
+        case2 = (length(spore) == ISS) && (SPORESIZE == "constant")
         case3 = (map(x-> x>0, sum(genepool)) == trues(GL) && (SPORESIZE == "complete"))
         if case1 || case2 || case3
             return spore
