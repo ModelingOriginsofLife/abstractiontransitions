@@ -22,7 +22,7 @@ type Cell
             ngenes = rand(1:genomelength)
             inds = rand(1:genomelength, ngenes)
         else # default
-            inds = rand(1:genomelength, NG)
+            inds = sample(1:genomelength, NG, replace=false)
         end
 
         genebitstring[inds] = true
