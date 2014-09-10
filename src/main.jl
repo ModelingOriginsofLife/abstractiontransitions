@@ -1,5 +1,9 @@
-using StatsBase
-using Datetime
+if length(ARGS) >= 2
+    configfile = ARGS[2]
+else
+    configfile = "constants.jl"
+    # configfile = "constants_test.jl"
+end
 
 require("include.jl")
 
@@ -7,7 +11,7 @@ require("include.jl")
 # setup
 #-------------------------
 
-if length(ARGS) == 1
+if length(ARGS) >= 1
     timestamp = string(gentimestamp(short=true), "_", ARGS[1])
 else
     timestamp = gentimestamp()
