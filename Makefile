@@ -11,7 +11,7 @@ MCFILE=montecarlo.jl
 PLOTFILE=plot.jl
 PLOTMCFILE=plotmc.jl
 TESTFILE=run_tests.jl
-PARDEP=parload.jl
+PARDEP=include.jl
 
 #---------------------------------------------
 # Default target
@@ -21,7 +21,11 @@ PARDEP=parload.jl
 
 default:
 ifdef folder
+ifdef config
+	cd src; julia $(TOPFILE) $(folder) $(config); cd ..
+else
 	cd src; julia $(TOPFILE) $(folder); cd ..
+endif
 else
 	cd src; julia $(TOPFILE); cd ..
 endif
@@ -53,6 +57,7 @@ plotmc:
 
 clean:
 	rm -rf output/*
+	rm input/constants_par*
 
 test:
 	julia $(TESTFILE)

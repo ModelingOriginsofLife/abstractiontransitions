@@ -1,5 +1,6 @@
-configfile = "constants.jl"
-# configfile = "constants_test.jl"
+using StatsBase
+using Datetime
+
 indir = joinpath("..","input")
 outdir = joinpath("..","output")
 require(joinpath(indir,configfile))

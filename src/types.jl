@@ -16,14 +16,24 @@ type Cell
     wantSporeSize::Integer
 
     function Cell(genomelength::Integer)
-        # dist = Categorical([.7,.2,.1])
-        # numgenes = rand(dist)
-        inds = rand(1:genomelength, NG)
         genebitstring = falses(genomelength)
-        genebitstring[inds] = true
-        promoter = convert(Array{Integer}, rand(1:NP, genomelength))
-        expressed = getexpressed(genebitstring, promoter)
 
+        if DIVERSITY == "random"
+            ngenes = rand(1:genomelength)
+            inds = rand(1:genomelength, ngenes)
+        else # default
+            inds = sample(1:genomelength, NG, replace=false)
+        end
+
+        genebitstring[inds] = true
+
+        if USEPROMOTERS == true
+            promoter = convert(Array{Integer}, rand(1:NP, genomelength))
+        elseif USEPROMOTERS == false
+            promoter = convert(Array{Integer}, [1:genomelength])
+        end
+
+        expressed = getexpressed(genebitstring, promoter)
         fitness = getfitness(genebitstring)
 
         new(genebitstring, promoter, expressed, fitness, ISS)
@@ -46,11 +56,23 @@ type Biofilm
 
     function Biofilm(size::Integer)
         cells = [Cell() for i in [1:size]]
+
+        if typeof(DIVERSITY) == typeof(1)
+            ntypes = min(size, DIVERSITY)
+            for (i, cell) in enumerate(cells)
+                cell.genome = falses(GL)
+                n = mod(i, ntypes)
+                idx = n*round(GL/ntypes)+1:(n+1)*round(GL/ntypes)
+                cell.genome[idx] = trues(length(idx))
+                cell.expressed = getexpressed(cell.genome, cell.promoter)
+            end
+        end
+
         fitness = getfitness(cells)
         new(cells, fitness, NC/GL)
     end
 
-    function Biofilm(cells::Array{Cell,1},sporesize)
+    function Biofilm(cells::Array{Cell,1}, sporesize)
         fitness = getfitness(cells)
         new(cells, fitness, sporesize)
     end
@@ -63,8 +85,10 @@ end
 ######################################################
 type Population
     individuals::Array{Biofilm,1}
+    success::Integer
+    attempts::Integer
 
-    Population(size::Integer) = new([Biofilm() for i in [1:size]])
+    Population(size::Integer) = new([Biofilm() for i in [1:size]], 0, 0)
 end
 
 type Measure
