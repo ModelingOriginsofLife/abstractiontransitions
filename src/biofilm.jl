@@ -25,14 +25,18 @@ function grow(bf::Biofilm)
         # replicate and mutate
         if GROW == "fitness"
             fitvec = WeightVec((Float64)[c.fitness for c in bf.individuals])
-            idx = sample([1:length(bf.individuals)], fitvec, 1)
+            idx = sample([1:length(bf.individuals)], fitvec)
         elseif GROW == "uniform"
-            idx = sample([1:length(bf.individuals), 1])
+            #idx = sample([1:length(bf.individuals), 1])
+            idx = sample([1:ncells])
         end
 
-        newcell = deepcopy(bf.individuals[idx[1]])
-        mutate(newcell)
+        newcell = deepcopy(bf.individuals[idx])
+        #mutate(newcell)
         push!(bf.individuals, newcell)
+    end
+    for cell in bf.individuals
+        mutate(cell)
     end
     bf.fitness = getfitness(bf.individuals)
 end
@@ -65,10 +69,10 @@ function getspore(bf::Biofilm)
     genepool = Array(BitArray{1}, 0)
 
     if GETSPORE == "uniform"
-        idx = sample([1:NC], NC, replace=false)
+        idx = sample([1:NC], NC, replace=true)
     elseif GETSPORE == "fitness"
         fitvec = WeightVec((Float64)[bf.fitness for bf in pop.individuals])
-        idx = sample([1:NC], fitvec, replace=false)
+        idx = sample([1:NC], fitvec, replace=true)
     end
 
     for i in idx
