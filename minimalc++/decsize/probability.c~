@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+void main(int argc, char **argv)
+{
+   FILE *f;
+   int NF = atoi(argv[1]);
+   int SS;
+   int i,j;
+   double Nfail = 0, Ntries = 0;
+   int hasall;
+   
+   int *func = (int*)malloc(sizeof(int)*NF);
+   
+   for (SS=1;SS<100;SS++)
+   {
+      Nfail = 0; Ntries = 0;
+      
+      for (i=0;i<10000;i++)
+      {
+	 memset(func,0,sizeof(int)*NF);
+	 
+	 for (j=0;j<SS;j++)
+	 {
+	    func[rand()%NF]=1;
+	 }	 
+	 
+	 hasall=1;
+	 for (j=0;j<NF;j++)
+	   if (!func[j]) hasall=0;
+	 
+	 if (!hasall) Nfail++;
+	 Ntries++;
+      }      
+      
+      f=fopen(argv[2],"a");
+      fprintf(f,"%d %.6g\n",SS,Nfail/(double)Ntries);
+      fclose(f);
+   }   
+}
