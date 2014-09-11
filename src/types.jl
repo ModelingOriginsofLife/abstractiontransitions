@@ -115,6 +115,7 @@ type MeasureAll
     diversity::Matrix{Float64} # number of types per biofilm
     sporesize::Matrix{Float64} # sporesize for biofilms
     expressed::Matrix{Float64} # sporesize for biofilms
+    survival::Vector{Float64} # sporesize for biofilms
 end
 
 typealias Time Int64

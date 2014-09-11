@@ -27,9 +27,10 @@ function MeasureAll()
     diversity = zeros(Float64,NUMMEAS,NB)
     sporesize = zeros(Float64,NUMMEAS,NB)
     expressed = zeros(Float64,NUMMEAS,NB*NC)
+    survival = zeros(Float64,NUMMEAS)
 
     MeasureAll(time,biofitness,fitness,numfuncs,diversity,
-                 sporesize,expressed)
+                 sporesize,expressed,survival)
 end
 
 function measure(pop::Population, m::Measure, t::Time, n::Int64)
@@ -91,9 +92,9 @@ function measure(pop::Population, m::MeasureAll, t::Time, n::Int64)
     m.sporesize[n,:] = sporesizevect
     m.expressed[n,:] = expressedvect
     if pop.attempts != 0
-        survival = pop.success/pop.attempts
+        m.survival[n] = pop.success/pop.attempts
     else
-        survival = -1
+        m.survival[n] = -1
     end
 
     @printf("time: %06d, measurement: %03d, cfitness: %5.3f, numfuncs: %5.3f, expressed: %5.3f, diversity: %5.3f, bfitness: %5.3f, sporesize: %5.3f, survival: %5.3f\n",
@@ -105,7 +106,7 @@ function measure(pop::Population, m::MeasureAll, t::Time, n::Int64)
                 mean(m.diversity[n,:]),
                 mean(m.biofitness[n,:]),
                 mean(m.sporesize[n,:]),
-                survival)
+                m.survival[n])
 
 end
 
