@@ -52,15 +52,10 @@ end
 
 # Create a spore and grow it
 function reproduce(bf::Biofilm)
-
     idx = getspore(bf)
-    if idx == 0
-        return 0
-    else
-        new_ = Biofilm(bf.individuals[idx], length(idx))
-        grow(new_)
-        return new_
-    end
+    new_ = Biofilm(bf.individuals[idx], length(idx))
+    grow(new_)
+    return new_
 end
 
 # Returns a set of cells which possess all possible functions
@@ -87,8 +82,6 @@ function getspore(bf::Biofilm)
             return spore
         end
     end
-    if DEBUGFLAG
-        println("Something fishy in getspore(), we should not be here.")
-    end
-    return 0
+    error("Something fishy in getspore(), we should not be here.")
+    exit()
 end
