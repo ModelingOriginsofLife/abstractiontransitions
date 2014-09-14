@@ -1,5 +1,3 @@
-using Distance
-
 Biofilm() = Biofilm(NC)
 
 function getfitness(cells::Array{Cell,1})
