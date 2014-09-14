@@ -57,7 +57,8 @@ plotmc:
 
 clean:
 	rm -rf output/*
-	rm input/constants_par*
+	rm -f input/constants_par*
+	rm -f src/*.cov
 
 test:
 	julia $(TESTFILE)

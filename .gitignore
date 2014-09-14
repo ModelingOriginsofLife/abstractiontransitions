@@ -2,3 +2,4 @@ output/
 *.sublime-*
 *.dat
 *.out
+*.cov
