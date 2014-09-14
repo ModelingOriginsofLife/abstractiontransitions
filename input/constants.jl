@@ -3,7 +3,7 @@
   ##################################
 
   const NB = 100 # number of biofilms
-  const NC = 200 # number of cells per biofilm
+  const NC = 100 # number of cells per biofilm
 
   ####################
   ### Cell definition
@@ -11,8 +11,8 @@
 
   const GL = 10 # number of genes in a genome
 
-  const DIVERSITY = 2 # choices are: "random", "default", or any integer
-  const NG = 1  # initial number of gene per cell, used in "default" only.
+  const DIVERSITY = "default" # choices are: "random", "default", or any integer
+  const NG = 10  # initial number of gene per cell, used in "default" only.
 
   const SPORESIZE = "constant" # constant, firstPickChooses, complete
   const ISS = 40 # Initial Spore Size
@@ -39,7 +39,7 @@
 
 
   ### Mutations
-  const MF = 0.001 # gene mutation factor
+  const MF = 0.010 # gene mutation factor
   const PF = 0.000 # promoter mutation factor
   const HT = 0.000 # horizontal gene transfer
 
@@ -49,7 +49,7 @@
   ### Simulation related parameters
   ##################################
 
-  const MAXTIME = 100 # number of iterations
+  const MAXTIME = 5000 # number of iterations
   const FRACMEAS = 50/MAXTIME
   const MEASPERIOD = convert(Int64,round(1/FRACMEAS))
   const NUMMEAS = convert(Int64,round(MAXTIME/MEASPERIOD) + 1)
