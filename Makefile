@@ -11,7 +11,8 @@ MCFILE=montecarlo.jl
 PLOTFILE=plot.jl
 PLOTMCFILE=plotmc.jl
 TESTFILE=run_tests.jl
-PARDEP=include.jl
+PARDEP=parscan.jl
+PNUM=6
 
 #---------------------------------------------
 # Default target
@@ -34,11 +35,9 @@ mc:
 	cd src; julia $(MCFILE); cd ..
 
 parallel:
-	declare -i PNUM; \
-	export PNUM=`nproc`-2; \
 	cd src; \
 	/usr/bin/time -f "%E real\n%U user\n%S sys\n%K memory (kB)" \
-	julia -p $(PNUM) -L $(PARDEP) $(TOPFILE); \
+	julia -p $(PNUM) $(PARDEP); \
 	cd ..
 
 plot:
