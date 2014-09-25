@@ -54,3 +54,30 @@ if length(ARGS)>0
     simdir=joinpath("..",ARGS[1])
     plot2(simdir)
 end
+
+function extractsurvival(pathtorepo,numss,numtrials,datestring)
+
+    # pathtorepo = "$HOME/mnt/cluster/abstractiontransitions"
+    # numss = 40
+    # numtrials = 1
+    # datestring = "2014925"
+
+    rv = (String)[]
+    push!(rv,"survival\tsporesize")
+
+    for i = 1:numss, j=1:numtrials
+        column = readdlm(joinpath(pathtorepo,
+                                  "output",
+                                  "$(datestring)_ISS$(i)_T$(j)",
+                                  "survival.csv"))
+        line = "$(column[end,1])\t$(i)"
+        push!(rv,line)
+    end
+
+    rv = join(rv,"\n")
+    f = open("../output/survivalsporesize.tsv","w")
+    write(f,rv)
+    close(f)
+    return rv
+
+end
