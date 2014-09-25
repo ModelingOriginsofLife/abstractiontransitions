@@ -1,9 +1,8 @@
-require("main.jl")
-
-using Iterators
 using ClusterManagers
-
 addprocs_sge(4)
+
+require("main.jl")
+using Iterators
 
 ISSs = [1:2]
 TRIALs = [1:2]
