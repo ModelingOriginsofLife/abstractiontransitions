@@ -55,23 +55,28 @@ if length(ARGS)>0
     plot2(simdir)
 end
 
-function extractsurvival(pathtorepo,numss,numtrials,datestring)
+function extractsurvival(pathtorepo,numss,numtrials,datestrings)
 
     # pathtorepo = "$HOME/mnt/cluster/abstractiontransitions"
-    # numss = 40
-    # numtrials = 1
-    # datestring = "2014925"
+    # numss = 100
+    # numtrials = 15
+    # datestrings = ["2014925","2014926","2014927"]
 
     rv = (String)[]
     push!(rv,"survival\tsporesize")
 
     for i = 1:numss, j=1:numtrials
-        column = readdlm(joinpath(pathtorepo,
-                                  "output",
-                                  "$(datestring)_ISS$(i)_T$(j)",
-                                  "survival.csv"))
-        line = "$(column[end,1])\t$(i)"
-        push!(rv,line)
+        for datestring in datestrings
+            datfile = joinpath(pathtorepo,
+                      "output",
+                      "$(datestring)_ISS$(i)_T$(j)",
+                      "survival.csv")
+            if isfile(datfile)
+                column = readdlm(datfile)
+                line = "$(column[end,1])\t$(i)"
+                push!(rv,line)
+            end
+        end
     end
 
     rv = join(rv,"\n")
