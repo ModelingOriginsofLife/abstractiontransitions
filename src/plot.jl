@@ -72,8 +72,13 @@ function extractsurvival(pathtorepo,numss,numtrials,datestrings)
                       "$(datestring)_ISS$(i)_T$(j)",
                       "survival.csv")
             if isfile(datfile)
+                sssfile = joinpath(pathtorepo,
+                      "output",
+                      "$(datestring)_ISS$(i)_T$(j)",
+                      "sporesize.csv")
+                sss = readdlm(sssfile)
                 column = readdlm(datfile)
-                line = "$(column[end,1])\t$(i)"
+                line = "$(column[end,1])\t$(sss[1,1])"
                 push!(rv,line)
             end
         end
@@ -83,6 +88,23 @@ function extractsurvival(pathtorepo,numss,numtrials,datestrings)
     f = open("../output/survivalsporesize.tsv","w")
     write(f,rv)
     close(f)
+
+    dat,head = readdlm("../output/survivalsporesize.tsv",header=true)
+    sss = zeros(numss,numtrials)
+    for i = 1:numss
+        ind = find(x->x==i,dat[:,2])
+        if length(ind) > 0
+            if length(ind) <= numtrials
+                sss[i,1:length(ind)]=dat[ind,1]
+            else
+                sss[i,:] = dat[ind[1:numtrials],1]
+            end
+        end
+    end
+    f = open("../output/survivalsporesize.csv","w")
+    writedlm(f,sss)
+    close(f)
+
     return rv
 
 end

@@ -134,6 +134,7 @@ def make_histogram(outname, data):
 
     fig1=plt.figure(num=1,figsize=(12,9),facecolor='w')
     ax1f1 = fig1.add_subplot(111)
+    # plt.hist2d(time, data, cmap='YlOrRd',bins=[100,70])
     plt.hist2d(time, data, cmap='YlOrRd')
     # plt.hist2d(time, data, cmap=bmap.get_mpl_colormap(N=1000, gamma=2.0))
     cbar = plt.colorbar()
