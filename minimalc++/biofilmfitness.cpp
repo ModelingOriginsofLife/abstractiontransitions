@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-
+#include <random>
 #include <mpi.h>
 
 using namespace std;
@@ -12,6 +12,8 @@ using namespace std;
 #include <math.h>
 #include <string.h>
 
+mt19937 generator;
+
 int BIOPOP=100;
 double MRATE=1e-2;
 int NFUNC=10;
@@ -19,9 +21,16 @@ int CARRYCAP=100;
 int rseed = 0;
 
 int prand(double P)
+{	
+	bernoulli_distribution distribution(P);
+	return distribution(generator);	
+}
+
+int irand(int min, int max)
 {
-	if (rand()%1000000<1000000*P) return 1;
-	return 0;
+	uniform_int_distribution<int> distribution(min, max-1);
+	
+	return distribution(generator);
 }
 
 class Cell
@@ -137,7 +146,7 @@ void getRandomOrder(int l)
 		
 	for (int i=0;i<l-1;i++)
 	{
-		int j = rand()%(l-i)+i;
+		int j = irand(0,l-i)+i;
 		int buf = randomOrder[i];
 		randomOrder[i] = randomOrder[j];
 		randomOrder[j] = buf;
@@ -238,12 +247,12 @@ void Biofilm::growFromSpore(Biofilm *parent, int sporesize)
 	
 	for (int i=0;i<sporesize;i++)
 	{
-		population[i] = parent->population[rand()%BIOPOP];		
+		population[i] = parent->population[irand(0,BIOPOP)];		
 	}
 	
 	for (;N<BIOPOP;N++)
 	{
-		population[N] = population[rand()%sporesize];
+		population[N] = population[irand(0,sporesize)];
 	}
 	
 	for (int i=0;i<BIOPOP;i++)
@@ -269,7 +278,7 @@ int main(int argc, char **argv)
 		
 	char Str[512];
 	
-	srand(rseed);
+	generator.seed(rseed);
 		
 	Population Soup;
 	
