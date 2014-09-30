@@ -30,16 +30,16 @@ function reproduce(pop::Population)
             _new = reproduce(oldpop.individuals[idx[j]])
             pop.attempts += 1
             if _new.fitness == 1
-                pop.individuals[i] = _new
+                pop.individuals[i] = deepcopy(_new)
                 pop.success += 1
-                i += 1
+                i += 1 # we filled one spot in the population vector, prepare next
                 if i > NB
                     break
                 end
             end
-            k += 1
+            k += 1 # next trial for a given biofilm
         end
-        j += 1
+        j += 1 # try next biofilm in ordered population
     end
 
     pop.currentNB = i-1
