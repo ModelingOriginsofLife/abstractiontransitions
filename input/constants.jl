@@ -15,7 +15,7 @@
   const NG = 10  # initial number of gene per cell, used in "default" only.
 
   const SPORESIZE = "constant" # constant, firstPickChooses, complete
-  const ISS = 40 # Initial Spore Size
+  const ISS = 80 # Initial Spore Size
 
   const USEPROMOTERS = false
   const NP = 10 # number of types of promoter
