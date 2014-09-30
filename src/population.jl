@@ -6,19 +6,19 @@ function reproduce(pop::Population)
     oldpop = deepcopy(pop)
 
     trials = 1
-    NB = length(pop.individuals)
     if REPRODUCE == "uniform"
         idx = sample([1:NB], NB)
     elseif REPRODUCE == "fitness"
         idx = sample([1:NB], fitvec, NB)
     elseif REPRODUCE == "duplicate"
-        idx = sample([1:NB], NB, replace=false)
+        idx = sample([1:pop.currentNB], pop.currentNB, replace=false)
         trials = 2
     end
   
     i = 1 # population vector index
     j = 1 # index on idx
-    while (i <= NB && j <= NB)
+
+    while (i <= NB && j <= pop.currentNB)
 
         if j > length(idx)
             error("index should not be greater than size of idx array.")
@@ -40,10 +40,9 @@ function reproduce(pop::Population)
             k += 1
         end
         j += 1
-
     end
 
-    resize!(pop.individuals, i-1)
-    println(i-1)
+    pop.currentNB = i-1
+    println(pop.currentNB)
 
 end

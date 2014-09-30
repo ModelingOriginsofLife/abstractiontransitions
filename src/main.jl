@@ -51,7 +51,7 @@ function main(ARGS)
 
         reproduce(pop)
 
-        if maximum( map(x->x.fitness,pop.individuals) ) == 0
+        if maximum( map(x->x.fitness,pop.individuals) ) == 0 || pop.currentNB == 0
            println("No viable biofilm anymore. Saving and exiting.")
            break
         end
