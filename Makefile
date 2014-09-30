@@ -12,6 +12,7 @@ PLOTFILE=plot.jl
 PLOTMCFILE=plotmc.jl
 TESTFILE=run_tests.jl
 PARDEP=parscan.jl
+SERIAL=serial.jl
 PNUM=6
 
 #---------------------------------------------
@@ -33,6 +34,9 @@ endif
 
 mc:
 	cd src; julia $(MCFILE); cd ..
+
+serial:
+	cd src; julia $(SERIAL); cd ..
 
 parallel:
 	cd src; \
