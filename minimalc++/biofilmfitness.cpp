@@ -16,6 +16,7 @@ mt19937 generator;
 
 int BIOPOP=100;
 double MRATE=1e-2;
+double HGTRATE=0;
 int NFUNC=10;
 int CARRYCAP=100;
 int rseed = 0;
@@ -38,6 +39,7 @@ class Cell
 	public:
 		char *functions;
 		
+		void HGT(Cell *Other);
 		void Mutate();
 		void alloc();
 		
@@ -65,6 +67,12 @@ void Cell::Mutate()
 		if (prand(MRATE))
 			functions[i] = 0;
 	}
+}
+
+void Cell::HGT(Cell *Other)
+{
+	int idx = irand(0, NFUNC);
+	functions[idx] = Other->functions[idx];
 }
 
 class Biofilm
@@ -257,6 +265,12 @@ void Biofilm::growFromSpore(Biofilm *parent, int sporesize)
 	
 	for (int i=0;i<BIOPOP;i++)
 		population[i].Mutate();
+
+	for (int i=0;i<BIOPOP;i++)
+	{
+		if (prand(HGTRATE))
+			population[i].HGT(&population[irand(0,BIOPOP)]);
+	}
 }
 
 int main(int argc, char **argv)
@@ -273,6 +287,7 @@ int main(int argc, char **argv)
 	NFUNC = atoi(argv[4]);
 	BIOPOP = atoi(argv[5]);
 	CARRYCAP = atoi(argv[6]);
+	HGTRATE = atof(argv[7]);
 	
 	randomOrder = (int*)malloc(sizeof(int) * CARRYCAP);
 		
@@ -296,9 +311,9 @@ int main(int argc, char **argv)
 		for (int i=0;i<Ngen;i++)
 			Soup.Iterate(ss);
 			
-		sprintf(Str,"%s_%d.txt",argv[7],thread_id);
+		sprintf(Str,"%s_%d.txt",argv[8],rseed);
 		f=fopen(Str,"a");
-		fprintf(f,"%d %d %d\n",ss,Soup.failures, Soup.attempts);
+		fprintf(f,"%d %d %d %.6g %.6g %d %d %d\n",ss,Soup.failures, Soup.attempts, MRATE, HGTRATE, BIOPOP, CARRYCAP, NFUNC);
 		fclose(f);
 	}
 	
