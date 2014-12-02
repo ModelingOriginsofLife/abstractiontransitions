@@ -149,5 +149,11 @@ probBGivenN n p g =
       ppab = HT.sliceVertical (length propt) (DL.map snd pab)
       popt = countPopTypes n p g
       popprob = [(x,y) | x<-popt, y<-ppab]
-      zipTupleList (x,y) = zipWith (*) (DL.map fromIntegral x) y
-  in DL.map zipTupleList popprob
+      multTupleList (x,y) = zipWith (*) (DL.map fromIntegral x) y
+      normvec xs = [x / (sum xs) | x <- xs]
+      probvec = DL.map normvec (HT.sliceVertical (length propt) (DL.map (sum . multTupleList) popprob))
+  in zip (DL.map reverse (sequence [popt,propt])) (concat probvec)
+
+probN'GivenN = undefined
+
+probDistN'N = undefined
