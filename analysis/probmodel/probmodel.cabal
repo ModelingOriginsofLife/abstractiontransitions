@@ -57,7 +57,7 @@ executable probmodel
   -- other-extensions:
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.7 && <4.8, hmatrix >=0.16 && <0.17, random >=1.0 && <1.1, multiset >= 0.2.2
+  build-depends:       base >=4.7 && <4.8, hmatrix >=0.16 && <0.17, random >=1.0 && <1.1, multiset >= 0.2.2, utility-ht >= 0.0.10
 
   -- Directories containing source files.
   -- hs-source-dirs:

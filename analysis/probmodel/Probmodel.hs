@@ -6,6 +6,7 @@ import Prelude
 import Numeric.LinearAlgebra as LA
 import Data.MultiSet as MS
 import Data.List as DL
+import Data.List.HT as HT
 import Control.Monad as CM
 import System.Random
 
@@ -94,7 +95,6 @@ viablePropagules p g = DL.filter checkViability (propaguleTypes p g)
   >>>countPropTypes 3 2
   [[3,0,0,0],[2,1,0,0],[2,0,1,0],[2,0,0,1],[1,2,0,0],[1,1,1,0],[1,1,0,1],[1,0,2,0],[1,0,1,1],[1,0,0,2],[0,2,1,0],[0,1,2,0],[0,1,1,1]]
 -}
-
 countPropTypes :: Int -> Int -> [[Occur]]
 countPropTypes p g = transpose (DL.map (countGenomesInProps p g) (boolLists g))
   where
@@ -122,3 +122,32 @@ probAGivenB [a,b] =
       y = DL.map fromIntegral b
   in (((factorial (sum x))) / (product (DL.map factorial x))) * (product (zipWith (**) y x))
 probAGivenB _ = error "Must input list with exactly two lists"
+
+probDistAB :: Int -> Int -> [([[Occur]], Double)]
+probDistAB p g =
+  let pp = CM.replicateM 2 (countPropTypes p g)
+      pab = DL.map probAGivenB pp
+  in zip pp [x / (sum pab) | x <- pab]
+
+{-|
+  The 'countPopTypes' function generates a list containing lists
+  counting the number of each genotype in each viable propagule type.
+  It takes two arguments of type 'Int' that respectively specify the propagule
+  size and the genome length.
+
+  >>>countPopTypes 3 2 2
+  [[3,0,0,0,0],[2,1,0,0,0],[2,0,1,0,0],[2,0,0,1,0],[2,0,0,0,1],[1,2,0,0,0],[1,1,1,0,0],[1,1,0,1,0],[1,1,0,0,1],[1,0,2,0,0],[1,0,1,1,0],[1,0,1,0,1],[1,0,0,2,0],[1,0,0,1,1],[1,0,0,0,2],[0,3,0,0,0],[0,2,1,0,0],[0,2,0,1,0],[0,2,0,0,1],[0,1,2,0,0],[0,1,1,1,0],[0,1,1,0,1],[0,1,0,2,0],[0,1,0,1,1],[0,1,0,0,2],[0,0,3,0,0],[0,0,2,1,0],[0,0,2,0,1],[0,0,1,2,0],[0,0,1,1,1],[0,0,1,0,2],[0,0,0,3,0],[0,0,0,2,1],[0,0,0,1,2],[0,0,0,0,3]]
+-}
+countPopTypes :: Int -> Int -> Int -> [[Occur]]
+countPopTypes n p g = transpose (DL.map (countPropsInPops n p g) (countPropTypes p g))
+  where
+    countPropsInPops n p g xs = DL.map (occur xs) (DL.map MS.fromList (combsWithRep n (countPropTypes p g)))
+
+probBGivenN n p g =
+  let propt = countPropTypes p g
+      pab = probDistAB p g
+      ppab = HT.sliceVertical (length propt) (DL.map snd pab)
+      popt = countPopTypes n p g
+      popprob = [(x,y) | x<-popt, y<-ppab]
+      zipTupleList (x,y) = zipWith (*) (DL.map fromIntegral x) y
+  in DL.map zipTupleList popprob
