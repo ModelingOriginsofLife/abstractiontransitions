@@ -59,7 +59,7 @@ combsWithRep :: Int -> [a] -> [[a]]
 combsWithRep k xs = combsBySize xs !! k
  where
    combsBySize = foldr f ([[]] : repeat [])
-   f x next = scanl1 (\z n -> DL.map (x:) z ++ n) next
+   f x = scanl1 (\z n -> DL.map (x:) z ++ n)
 
 {-|
   The 'propaguleTypes' function generates lists of a given length p of lists of a given length g of type 'Bool'.
@@ -81,7 +81,7 @@ propaguleTypes p g = combsWithRep p (boolLists g)
   False
 -}
 checkViability :: [[Bool]] -> Bool
-checkViability xs = and (DL.map or (transpose xs))
+checkViability xs = all or (transpose xs)
 
 {-|
   The 'viablePropagules' function generates a list containing
@@ -106,7 +106,7 @@ viablePropagules p g = DL.filter checkViability (propaguleTypes p g)
 countPropTypes :: Int -> Int -> [[Occur]]
 countPropTypes p g = transpose (DL.map (countGenomesInProps p g) (boolLists g))
   where
-    countGenomesInProps p g xs = DL.map (occur xs) (DL.map MS.fromList (viablePropagules p g))
+    countGenomesInProps p g xs = DL.map (occur xs . MS.fromList) (viablePropagules p g)
 
 {-|
   Standard factorial function
@@ -128,14 +128,14 @@ probAGivenB :: [[Int]] -> Double
 probAGivenB [a,b] =
   let x = DL.map fromIntegral a
       y = DL.map fromIntegral b
-  in (((factorial (sum x))) / (product (DL.map factorial x))) * (product (zipWith (**) y x))
+  in factorial (sum x) / product (DL.map factorial x) * product (zipWith (**) y x)
 probAGivenB _ = error "Must input list with exactly two lists"
 
 probDistAB :: Int -> Int -> [([[Occur]], Double)]
 probDistAB p g =
   let pp = CM.replicateM 2 (countPropTypes p g)
       pab = DL.map probAGivenB pp
-  in zip pp [x / (sum pab) | x <- pab]
+  in zip pp [x / sum pab | x <- pab]
 
 {-|
   The 'countPopTypes' function generates a list containing lists
@@ -149,7 +149,7 @@ probDistAB p g =
 countPopTypes :: Int -> Int -> Int -> [[Occur]]
 countPopTypes n p g = transpose (DL.map (countPropsInPops n p g) (countPropTypes p g))
   where
-    countPropsInPops n p g xs = DL.map (occur xs) (DL.map MS.fromList (combsWithRep n (countPropTypes p g)))
+    countPropsInPops n p g xs = DL.map (occur xs . MS.fromList) (combsWithRep n (countPropTypes p g))
 
 probBGivenN :: Int -> Int -> Int -> [([[Occur]], Double)]
 probBGivenN n p g =
@@ -159,7 +159,7 @@ probBGivenN n p g =
       popt = countPopTypes n p g
       popprob = [(x,y) | x<-popt, y<-ppab]
       multTupleList (x,y) = zipWith (*) (DL.map fromIntegral x) y
-      normvec xs = [x / (sum xs) | x <- xs]
+      normvec xs = [x / sum xs | x <- xs]
       probvec = DL.map normvec (HT.sliceVertical (length propt) (DL.map (sum . multTupleList) popprob))
   in zip (DL.map reverse (sequence [popt,propt])) (concat probvec)
 
@@ -167,7 +167,7 @@ probN'GivenN :: [Double] -> [[Int]] -> Double
 probN'GivenN pan [m',m] =
   let n' = DL.map fromIntegral m'
       n = DL.map fromIntegral m
-  in (((factorial (sum n'))) / (product (DL.map factorial n'))) * (product (zipWith (**) pan n'))
+  in factorial (sum n') / product (DL.map factorial n') * product (zipWith (**) pan n')
 probN'GivenN _ _ = error "Must input list with exactly two lists"
 
 probDistN'N :: Int -> Int -> Int -> [Double]
