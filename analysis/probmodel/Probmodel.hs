@@ -2,6 +2,7 @@
 
 module Main where
 
+import System.Environment
 import Prelude
 import Numeric.LinearAlgebra as LA
 import Data.MultiSet as MS
@@ -12,22 +13,29 @@ import System.Random
 
 {-|
   main function
+
+  usage:
+  probmodel 1 2 2 out.mat out.lab
 -}
 main :: IO ()
-main = undefined
+-- main = undefined
+main = do
+  [n,p,g,matf,labf] <- getArgs
+  writeFile matf (dispf 2 (matN'N (read n) (read p) (read g)))
+  writeFile labf (show (countPopTypes (read n) (read p) (read g)))
 
 {-|
-  The 'rand' function generates a random matrix of dimension r x c.
+  The 'randMat' function generates a random matrix of dimension r x c.
   It takes two arguments of type 'Int' that respectively specify the number of rows and columns.
 
-  >>>rand 3 2
+  >>>randMat 3 2
   (3><2)
   [ 0.9037125189340266, 0.25479302427488987
   , 0.6175302786834214,   0.556635366546286
   , 0.5584549817994493,  0.8991678943388014 ]
 -}
-rand :: Int -> Int -> IO (Matrix Double)
-rand r c = do
+randMat :: Int -> Int -> IO (Matrix Double)
+randMat r c = do
   seed <- randomIO
   return (reshape c $ randomVector seed Uniform (r*c))
 
@@ -170,8 +178,8 @@ probDistN'N n p g =
       nn = DL.map reverse (CM.replicateM 2 popt)
   in zipWith probN'GivenN (DL.concatMap (replicate (length popt)) pbn) nn
 
-disp :: Matrix Double -> IO ()
-disp = putStr . dispf 2
+-- disp :: Matrix Double -> IO ()
+-- disp = putStr . dispf 2
 
 matN'N :: Int -> Int -> Int -> Matrix Double
 matN'N n p g =
