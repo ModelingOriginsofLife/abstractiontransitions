@@ -143,6 +143,7 @@ countPopTypes n p g = transpose (DL.map (countPropsInPops n p g) (countPropTypes
   where
     countPropsInPops n p g xs = DL.map (occur xs) (DL.map MS.fromList (combsWithRep n (countPropTypes p g)))
 
+probBGivenN :: Int -> Int -> Int -> [([[Occur]], Double)]
 probBGivenN n p g =
   let propt = countPropTypes p g
       pab = probDistAB p g
@@ -154,6 +155,25 @@ probBGivenN n p g =
       probvec = DL.map normvec (HT.sliceVertical (length propt) (DL.map (sum . multTupleList) popprob))
   in zip (DL.map reverse (sequence [popt,propt])) (concat probvec)
 
-probN'GivenN = undefined
+probN'GivenN :: [Double] -> [[Int]] -> Double
+probN'GivenN pan [m',m] =
+  let n' = DL.map fromIntegral m'
+      n = DL.map fromIntegral m
+  in (((factorial (sum n'))) / (product (DL.map factorial n'))) * (product (zipWith (**) pan n'))
+probN'GivenN _ _ = error "Must input list with exactly two lists"
 
-probDistN'N = undefined
+probDistN'N :: Int -> Int -> Int -> [Double]
+probDistN'N n p g =
+  let propt = countPropTypes p g
+      popt = countPopTypes n p g
+      pbn = HT.sliceVertical (length propt) (DL.map snd (probBGivenN n p g))
+      nn = DL.map reverse (CM.replicateM 2 popt)
+  in zipWith probN'GivenN (DL.concatMap (replicate (length popt)) pbn) nn
+
+disp :: Matrix Double -> IO ()
+disp = putStr . dispf 2
+
+matN'N :: Int -> Int -> Int -> Matrix Double
+matN'N n p g =
+  let dim = length (countPopTypes n p g)
+  in trans ((dim><dim) (probDistN'N n p g) :: Matrix Double)
