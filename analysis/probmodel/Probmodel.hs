@@ -4,7 +4,7 @@ module Main where
 
 import System.Environment(getArgs)
 import Prelude
-import Numeric.LinearAlgebra(Matrix,RandDist(Uniform),(><),dispf,reshape,randomVector,trans)
+import Numeric.LinearAlgebra(Matrix,RandDist(Uniform),(><),dispf,reshape,randomVector,trans,eig,toColumns,(<>),constant,rows)
 import Data.MultiSet(Occur,fromList,occur)
 import Data.List(concatMap,filter,map,transpose)
 import Data.List.HT(sliceVertical)
@@ -20,8 +20,8 @@ import System.Random(randomIO)
 main :: IO ()
 -- main = undefined
 main = do
-  [n,p,g,mu,matf,labf] <- getArgs
-  writeFile matf (dispf 2 (matN'N (read n) (read p) (read g) (read mu)))
+  [n,p,g,mu,eta,matf,labf] <- getArgs
+  writeFile matf (dispf 2 (matN'N (read n) (read p) (read g) (read mu) (read eta)))
   writeFile labf (show (countPopTypes (read n) (read p) (read g)))
 
 {-|
@@ -114,19 +114,19 @@ countPropTypes p g = transpose (map (countGenomesInProps p g) (boolLists g))
 factorial :: (Num a, Enum a) => a -> a
 factorial n = product [n, n-1 .. 1]
 
-probMut :: Double -> Bool -> Bool -> Double
-probMut mu True True = 1.0 - mu
-probMut mu False True = mu
-probMut mu True False = 0.0
-probMut mu False False = 1.0
+probMut :: Double -> Double -> Bool -> Bool -> Double
+probMut mu eta True True = 1.0 - mu
+probMut mu eta False True = mu
+probMut mu eta True False = eta
+probMut mu eta False False = 1.0 - eta
 
-probMutNM :: Double -> [Bool] -> [Bool] -> Double
-probMutNM mu n m = product (zipWith (probMut mu) n m)
+probMutNM :: Double -> Double -> [Bool] -> [Bool] -> Double
+probMutNM mu eta n m = product (zipWith (probMut mu eta) n m)
 
-probMutnB :: Double -> [Int] -> [Bool] -> Double
-probMutnB mu b' n =
+probMutnB :: Double -> Double -> [Int] -> [Bool] -> Double
+probMutnB mu eta b' n =
   let b = map fromIntegral b'
-      pmnm = map (probMutNM mu n) (boolLists (length n))
+      pmnm = map (probMutNM mu eta n) (boolLists (length n))
       bDivS = [x / sum b | x <- b]
   in sum (zipWith (*) pmnm bDivS)
 
@@ -140,18 +140,18 @@ probMutnB mu b' n =
   [4.0,1.0,1.0,1.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,2.0]
   >>>let ppab = [x / (sum pab) | x <- pab]
 -}
-probAGivenB :: Int -> Double -> [[Int]] -> Double
-probAGivenB g mu [a,b] =
+probAGivenB :: Int -> Double -> Double -> [[Int]] -> Double
+probAGivenB g mu eta [a,b] =
   let x = map fromIntegral a
       -- y = map fromIntegral b
-      y = map (probMutnB mu b) (boolLists g)
+      y = map (probMutnB mu eta b) (boolLists g)
   in factorial (sum x) / product (map factorial x) * product (zipWith (**) y x)
-probAGivenB _ _ _ = error "Must input list with exactly two lists"
+probAGivenB _ _ _ _ = error "Must input list with exactly two lists"
 
-probDistAB :: Int -> Int -> Double -> [([[Occur]], Double)]
-probDistAB p g mu =
+probDistAB :: Int -> Int -> Double -> Double -> [([[Occur]], Double)]
+probDistAB p g mu eta =
   let pp = replicateM 2 (countPropTypes p g)
-      pab = map (probAGivenB g mu) pp
+      pab = map (probAGivenB g mu eta) pp
   in zip pp [x / sum pab | x <- pab]
 
 {-|
@@ -168,10 +168,10 @@ countPopTypes n p g = transpose (map (countPropsInPops n p g) (countPropTypes p 
   where
     countPropsInPops n p g xs = map (occur xs . fromList) (combsWithRep n (countPropTypes p g))
 
-probBGivenN :: Int -> Int -> Int -> Double -> [([[Occur]], Double)]
-probBGivenN n p g mu =
+probBGivenN :: Int -> Int -> Int -> Double -> Double -> [([[Occur]], Double)]
+probBGivenN n p g mu eta =
   let propt = countPropTypes p g
-      pab = probDistAB p g mu
+      pab = probDistAB p g mu eta
       ppab = sliceVertical (length propt) (map snd pab)
       popt = countPopTypes n p g
       popprob = [(x,y) | x<-popt, y<-ppab]
@@ -187,18 +187,18 @@ probN'GivenN pan [m',m] =
   in factorial (sum n') / product (map factorial n') * product (zipWith (**) pan n')
 probN'GivenN _ _ = error "Must input list with exactly two lists"
 
-probDistN'N :: Int -> Int -> Int -> Double -> [Double]
-probDistN'N n p g mu =
+probDistN'N :: Int -> Int -> Int -> Double -> Double -> [Double]
+probDistN'N n p g mu eta =
   let propt = countPropTypes p g
       popt = countPopTypes n p g
-      pbn = sliceVertical (length propt) (map snd (probBGivenN n p g mu))
+      pbn = sliceVertical (length propt) (map snd (probBGivenN n p g mu eta))
       nn = map reverse (replicateM 2 popt)
   in zipWith probN'GivenN (concatMap (replicate (length popt)) pbn) nn
 
 -- disp :: Matrix Double -> IO ()
 -- disp = putStr . dispf 2
 
-matN'N :: Int -> Int -> Int -> Double -> Matrix Double
-matN'N n p g mu =
+matN'N :: Int -> Int -> Int -> Double -> Double -> Matrix Double
+matN'N n p g mu eta =
   let dim = length (countPopTypes n p g)
-  in trans ((dim><dim) (probDistN'N n p g mu) :: Matrix Double)
+  in trans ((dim><dim) (probDistN'N n p g mu eta) :: Matrix Double)
